@@ -183,15 +183,10 @@ public class ClientRMIGUI extends JFrame implements ActionListener {
         sendButton.addActionListener(this);
         sendButton.setEnabled(false);
 
-//        privateMsgButton = new JButton("Send PM");
-//        privateMsgButton.addActionListener(this);
-//        privateMsgButton.setEnabled(false); TODO:Delete
-
         startButton = new JButton("Start ");
         startButton.addActionListener(this);
 
         JPanel buttonPanel = new JPanel(new GridLayout(2, 1));
-//        buttonPanel.add(privateMsgButton); TODO:Delete
         buttonPanel.add(new JLabel(""));
         buttonPanel.add(startButton);
         buttonPanel.add(sendButton);
@@ -228,21 +223,6 @@ public class ClientRMIGUI extends JFrame implements ActionListener {
                 sendMessage(message);
                 System.out.println("Sending message : " + message);
             }
-
-            //send a private message, to selected users
-
-            /*TODO:Delete
-            if (e.getSource() == privateMsgButton) {
-                int[] privateList = list.getSelectedIndices();
-
-                for (int i = 0; i < privateList.length; i++) {
-                    System.out.println("selected index :" + privateList[i]);
-                }
-                message = textField.getText();
-                textField.setText("");
-				sendPrivate(privateList);
-            }
-            */
         } catch (RemoteException remoteExc) {
             remoteExc.printStackTrace();
         }
@@ -253,15 +233,6 @@ public class ClientRMIGUI extends JFrame implements ActionListener {
     private void sendMessage(String chatMessage) throws RemoteException {
         chatClient.serverIF.updateChat(name, chatMessage);
     }
-
-    //Send a message, to be relayed, only to selected chatters
-
-	/*TODO:Delete
-	private void sendPrivate(int[] privateList) throws RemoteException {
-		String privateMessage = "[PM from " + name + "] :" + message + "\n";
-		chatClient.serverIF.sendPM(privateList, privateMessage);
-	}
-	*/
 
     //Make the connection to the chat server
     private void getConnected(String userName) throws RemoteException {

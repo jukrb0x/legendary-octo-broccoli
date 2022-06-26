@@ -88,11 +88,6 @@ public class ChatClient extends UnicastRemoteObject implements ChatClientIF {
 	@Override
 	public void updateUserList(String[] currentUsers) throws RemoteException {
 
-		/*TODO:Delete
-		if(currentUsers.length < 2){
-			chatGUI.privateMsgButton.setEnabled(false);
-		}
-		*/
 		chatGUI.userPanel.remove(chatGUI.clientPanel);
 		chatGUI.setClientPanel(currentUsers);
 		chatGUI.clientPanel.repaint();

@@ -22,7 +22,7 @@ public class ChatServer extends UnicastRemoteObject implements ChatServerIF {
 		chatters = new Vector<Chatter>(10, 1);
 	}
 
-	//LOCAL METHODS
+	//Local Method
 	public static void main(String[] args) {
 		startRMIRegistry();	
 		String hostName = "localhost";
@@ -54,15 +54,8 @@ public class ChatServer extends UnicastRemoteObject implements ChatServerIF {
 		}
 	}
 
-	//REMOTE METHODS
-	//Return a message to client
-	public String sayHello(String ClientName) throws RemoteException {
-		System.out.println(ClientName + " sent a message");
-		return "Hello " + ClientName + " from group chat server";
-	}
-	
-
-	//Send a string ( the latest post, mostly ) to all connected clients
+	//Remote Method
+	//Send a sentence to all connected clients
 	public void updateChat(String name, String nextPost) throws RemoteException {
 		String message =  name + " : " + nextPost + "\n";
 		sendToAll(message);
@@ -162,21 +155,6 @@ public class ChatServer extends UnicastRemoteObject implements ChatServerIF {
 			updateUserList();
 		}			
 	}
-
-	//A method to send a private message to selected clients
-	//The integer array holds the indexes (from the chatters vector)
-	//of the clients to send the message to
-
-
-	@Override
-	public void sendPM(int[] privateGroup, String privateMessage) throws RemoteException{
-		Chatter pc;
-		for(int i : privateGroup){
-			pc= chatters.elementAt(i);
-			pc.getClient().messageFromServer(privateMessage);
-		}
-	}
-
 }
 
 
