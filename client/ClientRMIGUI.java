@@ -61,7 +61,6 @@ public class ClientRMIGUI extends JFrame implements ActionListener {
     public ClientRMIGUI() {
 
         frame = new JFrame("Client Chat Console");
-        //-----------------------------------------
         //intercept close method, inform server we are leaving
         //then let the system exit.
 
@@ -83,19 +82,16 @@ public class ClientRMIGUI extends JFrame implements ActionListener {
         //-----------------------------------------
         //remove window buttons and border frame
         //to force user to exit on a button
-        //- one way to control the exit behaviour
-        //frame.setUndecorated(true);
-        //frame.getRootPane().setWindowDecorationStyle(JRootPane.FRAME);
 
         Container c = getContentPane();
         JPanel outerPanel = new JPanel(new BorderLayout());
 
         outerPanel.add(getInputPanel(), BorderLayout.CENTER);
-        outerPanel.add(getTextPanel(), BorderLayout.NORTH);
+        outerPanel.add(getTextPanel(), BorderLayout.SOUTH);
 
         c.setLayout(new BorderLayout());
         c.add(outerPanel, BorderLayout.CENTER);
-        c.add(getUsersPanel(), BorderLayout.WEST);
+        c.add(getUsersPanel(), BorderLayout.EAST);
 
         frame.add(c);
         frame.pack();
@@ -151,7 +147,7 @@ public class ClientRMIGUI extends JFrame implements ActionListener {
         setClientPanel(noClientsYet);
 
         clientPanel.setFont(meiryoFont);
-        userPanel.add(makeButtonPanel(), BorderLayout.SOUTH);
+        userPanel.add(makeButtonPanel(), BorderLayout.NORTH);
         userPanel.setBorder(blankBorder);
 
         return userPanel;
@@ -194,7 +190,7 @@ public class ClientRMIGUI extends JFrame implements ActionListener {
         startButton = new JButton("Start ");
         startButton.addActionListener(this);
 
-        JPanel buttonPanel = new JPanel(new GridLayout(4, 1));
+        JPanel buttonPanel = new JPanel(new GridLayout(2, 1));
 //        buttonPanel.add(privateMsgButton); TODO:Delete
         buttonPanel.add(new JLabel(""));
         buttonPanel.add(startButton);
