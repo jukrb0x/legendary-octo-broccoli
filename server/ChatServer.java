@@ -73,7 +73,6 @@ public class ChatServer extends UnicastRemoteObject implements ChatServerIF {
         try {
             java.rmi.registry.LocateRegistry.createRegistry(portNumber);
             String message = "RMI Registry started on port " + portNumber + "\n";
-            jta.append(message);
             System.out.println(message);
         } catch (RemoteException e) {
             e.printStackTrace();
