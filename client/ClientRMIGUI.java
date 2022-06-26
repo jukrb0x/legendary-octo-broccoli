@@ -42,10 +42,7 @@ public class ClientRMIGUI extends JFrame implements ActionListener{
     protected JButton privateMsgButton, startButton, sendButton;
     protected JPanel clientPanel, userPanel;
 
-	/**
-	 * Main method to start client GUI app.
-	 * @param args
-	 */
+	//Main method to start client GUI app.
 	public static void main(String args[]){
 		//set the look and feel to 'Nimbus'
 		try{
@@ -59,21 +56,16 @@ public class ClientRMIGUI extends JFrame implements ActionListener{
 		catch(Exception e){
 			}
 		new ClientRMIGUI();
-		}//end main
+		}
 
-
-	/**
-	 * GUI Constructor
-	 */
+	//GUI Constructor
 	public ClientRMIGUI(){
 
 		frame = new JFrame("Client Chat Console");
-
 		//-----------------------------------------
-		/*
-		 * intercept close method, inform server we are leaving
-		 * then let the system exit.
-		 */
+		//intercept close method, inform server we are leaving
+		//then let the system exit.
+
 		frame.addWindowListener(new java.awt.event.WindowAdapter() {
 		    @Override
 		    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
@@ -117,10 +109,7 @@ public class ClientRMIGUI extends JFrame implements ActionListener{
 	}
 
 
-	/**
-	 * Method to set up the JPanel to display the chat text
-	 * @return
-	 */
+	///Method to set up the JPanel to display the chat text
 	public JPanel getTextPanel(){
 		String welcome = "Welcome enter your name and press Start to begin\n";
 		textArea = new JTextArea(welcome, 14, 34);
@@ -138,10 +127,7 @@ public class ClientRMIGUI extends JFrame implements ActionListener{
 		return textPanel;
 	}
 
-	/**
-	 * Method to build the panel with input field
-	 * @return inputPanel
-	 */
+	//Method to build the panel with input field
 	public JPanel getInputPanel(){
 		inputPanel = new JPanel(new GridLayout(1, 1, 5, 5));
 		inputPanel.setBorder(blankBorder);
@@ -151,11 +137,8 @@ public class ClientRMIGUI extends JFrame implements ActionListener{
 		return inputPanel;
 	}
 
-	/**
-	 * Method to build the panel displaying currently connected users
-	 * with a call to the button panel building method
-	 * @return
-	 */
+	//Method to build the panel displaying currently connected users
+	//with a call to the button panel building method
 	public JPanel getUsersPanel(){
 
 		userPanel = new JPanel(new BorderLayout());
@@ -175,11 +158,8 @@ public class ClientRMIGUI extends JFrame implements ActionListener{
 		return userPanel;
 	}
 
-	/**
-	 * Populate current user panel with a
-	 * selectable list of currently connected users
-	 * @param currClients
-	 */
+	//Populate current user panel with a
+	//selectable list of currently connected users
     public void setClientPanel(String[] currClients) {
     	clientPanel = new JPanel(new BorderLayout());
         listModel = new DefaultListModel<String>();
@@ -202,10 +182,7 @@ public class ClientRMIGUI extends JFrame implements ActionListener{
         userPanel.add(clientPanel, BorderLayout.CENTER);
     }
 
-	/**
-	 * Make the buttons and add the listener
-	 * @return
-	 */
+	//Make the buttons and add the listener
 	public JPanel makeButtonPanel() {
 		sendButton = new JButton("Send ");
 		sendButton.addActionListener(this);
@@ -227,9 +204,7 @@ public class ClientRMIGUI extends JFrame implements ActionListener{
 		return buttonPanel;
 	}
 
-	/**
-	 * Action handling on the buttons
-	 */
+	//Action handling on the buttons
 	@Override
 	public void actionPerformed(ActionEvent e){
 
@@ -271,40 +246,25 @@ public class ClientRMIGUI extends JFrame implements ActionListener{
 				textField.setText("");
 				sendPrivate(privateList);
 			}
-
 		}
 		catch (RemoteException remoteExc) {
 			remoteExc.printStackTrace();
 		}
 
-	}//end actionPerformed
+	}
 
-	// --------------------------------------------------------------------
-
-	/**
-	 * Send a message, to be relayed to all chatters
-	 * @param chatMessage
-	 * @throws RemoteException
-	 */
+	//Send a message, to be relayed to all chatters
 	private void sendMessage(String chatMessage) throws RemoteException {
 		chatClient.serverIF.updateChat(name, chatMessage);
 	}
 
-	/**
-	 * Send a message, to be relayed, only to selected chatters
-	 * @param chatMessage
-	 * @throws RemoteException
-	 */
+	//Send a message, to be relayed, only to selected chatters
 	private void sendPrivate(int[] privateList) throws RemoteException {
 		String privateMessage = "[PM from " + name + "] :" + message + "\n";
 		chatClient.serverIF.sendPM(privateList, privateMessage);
 	}
 
-	/**
-	 * Make the connection to the chat server
-	 * @param userName
-	 * @throws RemoteException
-	 */
+	//Make the connection to the chat server
 	private void getConnected(String userName) throws RemoteException{
 		//remove whitespace and non word characters to avoid malformed url
 		String cleanedUserName = userName.replaceAll("\\s+","_");
@@ -316,8 +276,7 @@ public class ClientRMIGUI extends JFrame implements ActionListener{
 			e.printStackTrace();
 		}
 	}
-
-}//end class
+}
 
 
 

@@ -11,12 +11,6 @@ import java.util.Vector;
 
 import client.ChatClient3IF;
 
-/**
- * 
- * @author Daragh Walshe 	B00064428
- * RMI Assignment 2		 	April 2015
- *
- */
 public class ChatServer extends UnicastRemoteObject implements ChatServerIF {
 	String line = "---------------------------------------------\n";
 	private Vector<Chatter> chatters;
@@ -27,11 +21,8 @@ public class ChatServer extends UnicastRemoteObject implements ChatServerIF {
 		super();
 		chatters = new Vector<Chatter>(10, 1);
 	}
-	
-	//-----------------------------------------------------------
-	/**
-	 * LOCAL METHODS
-	 */	
+
+	//LOCAL METHODS
 	public static void main(String[] args) {
 		startRMIRegistry();	
 		String hostName = "localhost";
@@ -52,10 +43,7 @@ public class ChatServer extends UnicastRemoteObject implements ChatServerIF {
 		}	
 	}
 
-	
-	/**
-	 * Start the RMI Registry
-	 */
+	//Start the RMI Registry
 	public static void startRMIRegistry() {
 		try{
 			java.rmi.registry.LocateRegistry.createRegistry(1099);
@@ -65,34 +53,22 @@ public class ChatServer extends UnicastRemoteObject implements ChatServerIF {
 			e.printStackTrace();
 		}
 	}
-		
-	
-	//-----------------------------------------------------------
-	/*
-	 *   REMOTE METHODS
-	 */
-	
-	/**
-	 * Return a message to client
-	 */
+
+	//REMOTE METHODS
+	//Return a message to client
 	public String sayHello(String ClientName) throws RemoteException {
 		System.out.println(ClientName + " sent a message");
 		return "Hello " + ClientName + " from group chat server";
 	}
 	
 
-	/**
-	 * Send a string ( the latest post, mostly ) 
-	 * to all connected clients
-	 */
+	//Send a string ( the latest post, mostly ) to all connected clients
 	public void updateChat(String name, String nextPost) throws RemoteException {
 		String message =  name + " : " + nextPost + "\n";
 		sendToAll(message);
 	}
 	
-	/**
-	 * Receive a new client remote reference
-	 */
+	//Receive a new client remote reference
 	@Override
 	public void passIDentity(RemoteRef ref) throws RemoteException {	
 		//System.out.println("\n" + ref.remoteToString() + "\n");
@@ -101,13 +77,10 @@ public class ChatServer extends UnicastRemoteObject implements ChatServerIF {
 		}catch(Exception e){
 			e.printStackTrace();
 		}
-	}//end passIDentity
-
+	}
 	
-	/**
-	 * Receive a new client and display details to the console
-	 * send on to register method
-	 */
+	//Receive a new client and display details to the console
+	//send on to register method
 	@Override
 	public void registerListener(String[] details) throws RemoteException {	
 		System.out.println(new Date(System.currentTimeMillis()));
@@ -117,13 +90,9 @@ public class ChatServer extends UnicastRemoteObject implements ChatServerIF {
 		registerChatter(details);
 	}
 
-	
-	/**
-	 * register the clients interface and store it in a reference for 
-	 * future messages to be sent to, ie other members messages of the chat session.
-	 * send a test message for confirmation / test connection
-	 * @param details
-	 */
+	//register the clients interface and store it in a reference for
+	//future messages to be sent to, ie other members messages of the chat session.
+	//send a test message for confirmation / test connection
 	private void registerChatter(String[] details){		
 		try{
 			ChatClient3IF nextClient = ( ChatClient3IF )Naming.lookup("rmi://" + details[1] + "/" + details[2]);
@@ -141,10 +110,8 @@ public class ChatServer extends UnicastRemoteObject implements ChatServerIF {
 		}
 	}
 	
-	/**
-	 * Update all clients by remotely invoking their
-	 * updateUserList RMI method
-	 */
+	//Update all clients by remotely invoking their
+	//updateUserList RMI method
 	private void updateUserList() {
 		String[] currentUsers = getUserList();	
 		for(Chatter c : chatters){
@@ -156,12 +123,8 @@ public class ChatServer extends UnicastRemoteObject implements ChatServerIF {
 			}
 		}	
 	}
-	
 
-	/**
-	 * generate a String array of current users
-	 * @return
-	 */
+	//generate a String array of current users
 	private String[] getUserList(){
 		// generate an array of current users
 		String[] allUsers = new String[chatters.size()];
@@ -170,12 +133,8 @@ public class ChatServer extends UnicastRemoteObject implements ChatServerIF {
 		}
 		return allUsers;
 	}
-	
 
-	/**
-	 * Send a message to all users
-	 * @param newMessage
-	 */
+	//Send a message to all users
 	public void sendToAll(String newMessage){	
 		for(Chatter c : chatters){
 			try {
@@ -187,13 +146,10 @@ public class ChatServer extends UnicastRemoteObject implements ChatServerIF {
 		}	
 	}
 
-	
-	/**
-	 * remove a client from the list, notify everyone
-	 */
+	//remove a client from the list, notify everyone
 	@Override
 	public void leaveChat(String userName) throws RemoteException{
-		
+
 		for(Chatter c : chatters){
 			if(c.getName().equals(userName)){
 				System.out.println(line + userName + " left the chat session");
@@ -206,13 +162,10 @@ public class ChatServer extends UnicastRemoteObject implements ChatServerIF {
 			updateUserList();
 		}			
 	}
-	
 
-	/**
-	 * A method to send a private message to selected clients
-	 * The integer array holds the indexes (from the chatters vector) 
-	 * of the clients to send the message to
-	 */
+	//A method to send a private message to selected clients
+	//The integer array holds the indexes (from the chatters vector)
+	//of the clients to send the message to
 	@Override
 	public void sendPM(int[] privateGroup, String privateMessage) throws RemoteException{
 		Chatter pc;
@@ -221,8 +174,7 @@ public class ChatServer extends UnicastRemoteObject implements ChatServerIF {
 			pc.getClient().messageFromServer(privateMessage);
 		}
 	}
-	
-}//END CLASS
+}
 
 
 

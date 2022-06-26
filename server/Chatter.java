@@ -22,6 +22,4 @@ public class Chatter {
 	public ChatClient3IF getClient(){
 		return client;
 	}
-	
-	
 }

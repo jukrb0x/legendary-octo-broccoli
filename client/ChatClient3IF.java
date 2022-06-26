@@ -10,9 +10,3 @@ public interface ChatClient3IF extends Remote{
 	public void updateUserList(String[] currentUsers) throws RemoteException;
 	
 }
-/**
- * 
- * 
- * 
- *
- */
