@@ -8,7 +8,7 @@ public interface ChatServerIF extends Remote {
 
     public void updateChat(String userName, String chatMessage) throws RemoteException;
 
-    public void passIDentity(RemoteRef ref) throws RemoteException;
+    public void passIdentity(RemoteRef ref) throws RemoteException;
 
     public void registerListener(String[] details) throws RemoteException;
 

@@ -66,7 +66,7 @@ public class ChatClient extends UnicastRemoteObject implements ChatClientIF {
     //the server to register out interest in joining the chat
     public void registerWithServer(String[] details) {
         try {
-            serverIF.passIDentity(this.ref);
+            serverIF.passIdentity(this.ref);
             serverIF.registerListener(details);
         } catch (Exception e) {
             e.printStackTrace();

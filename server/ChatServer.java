@@ -15,7 +15,7 @@ import client.ChatClientIF;
 import javax.swing.*;
 
 public class ChatServer extends UnicastRemoteObject implements ChatServerIF {
-    String line = "---------------------------------------------\n";
+    String divider = "---------------------------------------------\n";
     private Vector<Chatter> chatters;
     private static final long serialVersionUID = 1L;
     protected static JTextArea jta = new JTextArea();
@@ -29,7 +29,7 @@ public class ChatServer extends UnicastRemoteObject implements ChatServerIF {
     //create Server's GUI
     private static void createGUI() {
         JFrame frame = new JFrame("Chat Server GUI");
-        frame.setSize(700,500);
+        frame.setSize(700, 500);
         frame.setLayout(new BorderLayout());
         frame.add(new JScrollPane(jta), BorderLayout.CENTER);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -59,8 +59,9 @@ public class ChatServer extends UnicastRemoteObject implements ChatServerIF {
         try {
             ChatServerIF hello = new ChatServer();
             Naming.rebind("rmi://" + hostName + "/" + serviceName, hello);
-            jta.append("Group Chat RMI Server is running... \n");
-            System.out.println("Group Chat RMI Server is running...");
+            String msg = "Chat server is ready at " + new Date() + "\n";
+            jta.append(msg);
+            System.out.println(msg);
         } catch (Exception e) {
             jta.append("Server had problems starting \n");
             System.out.println("Server had problems starting");
@@ -71,8 +72,9 @@ public class ChatServer extends UnicastRemoteObject implements ChatServerIF {
     public static void startRMIRegistry(int portNumber) {
         try {
             java.rmi.registry.LocateRegistry.createRegistry(portNumber);
-            jta.append("RMI Server ready \n");
-            System.out.println("RMI Server ready");
+            String message = "RMI Registry started on port " + portNumber + "\n";
+            jta.append(message);
+            System.out.println(message);
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -81,16 +83,16 @@ public class ChatServer extends UnicastRemoteObject implements ChatServerIF {
     //Remote Method
     //Send a sentence to all connected clients
     public void updateChat(String name, String nextPost) throws RemoteException {
-        String message = name + " : " + nextPost + "\n";
+        String message = "\n" + name + " [" + new Date(System.currentTimeMillis()) + "]:\n" + nextPost + "\n";
         sendToAll(message);
     }
 
     //Receive a new client remote reference
     @Override
-    public void passIDentity(RemoteRef ref) throws RemoteException {
+    public void passIdentity(RemoteRef ref) throws RemoteException {
 
         try {
-            System.out.println(line + ref.toString());
+            System.out.println(divider + ref.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -101,17 +103,25 @@ public class ChatServer extends UnicastRemoteObject implements ChatServerIF {
     @Override
     public void registerListener(String[] details) throws RemoteException {
 
-        jta.append(String.valueOf(new Date(System.currentTimeMillis()))+"\n");
+        jta.append(String.valueOf(new Date(System.currentTimeMillis())) + "\n");
         System.out.println(new Date(System.currentTimeMillis()));
 
-        jta.append(details[0] + " has joined the chat session"+"\n");
-        System.out.println(details[0] + " has joined the chat session");
+        String userName = details[0];
+        String hostName = details[1];
+        String RMI = details[2];
+        String msg = divider + userName + " has joined the chat.\n";
+        jta.append(msg);
+        System.out.println(msg);
 
-        jta.append(details[0] + "'s hostname : " + details[1]+"\n");
-        System.out.println(details[0] + "'s hostname : " + details[1]);
+        jta.append(" - hostname: " + hostName + "\n");
+        System.out.println(" hostname: " + hostName);
 
-        jta.append(details[0] + "'sRMI service : " + details[2]+"\n");
-        System.out.println(details[0] + "'sRMI service : " + details[2]);
+        jta.append(" - RMI service: " + RMI + "\n");
+        jta.append(divider);
+        System.out.println(" - RMI service: " + RMI);
+        System.out.println(divider);
+
+
         registerChatter(details);
     }
 
@@ -124,9 +134,9 @@ public class ChatServer extends UnicastRemoteObject implements ChatServerIF {
 
             chatters.addElement(new Chatter(details[0], nextClient));
 
-            nextClient.messageFromServer("[Server] : Welcome " + details[0] + ".\n");
+            nextClient.messageFromServer("\nChatroom Broadcast [" + new Date(System.currentTimeMillis()) + "]\nWelcome " + details[0] + "!\n");
 
-            sendToAll("[Server] : " + details[0] + " has joined the group.\n");
+            sendToAll("\nChatroom Broadcast [" + new Date(System.currentTimeMillis()) + "]\n" + details[0] + " has joined.\n");
 
             updateUserList();
         } catch (RemoteException | MalformedURLException | NotBoundException e) {
@@ -159,6 +169,7 @@ public class ChatServer extends UnicastRemoteObject implements ChatServerIF {
 
     //Send a message to all users
     public void sendToAll(String newMessage) {
+        jta.append(newMessage);
         for (Chatter c : chatters) {
             try {
                 c.getClient().messageFromServer(newMessage);
@@ -174,9 +185,9 @@ public class ChatServer extends UnicastRemoteObject implements ChatServerIF {
 
         for (Chatter c : chatters) {
             if (c.getName().equals(userName)) {
-                jta.append(line + userName + " left the chat session"+"\n");
-                System.out.println(line + userName + " left the chat session");
-                jta.append(String.valueOf(new Date(System.currentTimeMillis()))+"\n");
+                jta.append(divider + userName + " left." + "\n");
+                System.out.println(divider + userName + " left.");
+                jta.append(String.valueOf(new Date(System.currentTimeMillis())) + "\n");
                 System.out.println(new Date(System.currentTimeMillis()));
                 chatters.remove(c);
                 break;

@@ -38,12 +38,11 @@ public class ClientRMIGUI extends JFrame implements ActionListener {
     protected JButton loginButton, sendButton, exitButton;
     protected JPanel clientPanel, userPanel;
 
-    //Main method to start client GUI
     public static void main(String[] args) {
-        //set the look and feel to 'Nimbus'
+        // theme
         try {
             for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
+                if ("Synth".equals(info.getName())) {
                     UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
@@ -58,7 +57,7 @@ public class ClientRMIGUI extends JFrame implements ActionListener {
     public ClientRMIGUI() {
         // initialize the frames
         frameLogin = new JFrame("Login");
-        frameChatroom = new JFrame("Client Chat Console");
+        frameChatroom = new JFrame("Chatroom");
         initLogin();
         // window listener
         attachListener();
@@ -268,7 +267,7 @@ public class ClientRMIGUI extends JFrame implements ActionListener {
                 message = textField.getText();
                 textField.setText("");
                 sendMessage(message);
-                System.out.println("Sending message : " + message);
+                System.out.println("[Sending] " + message);
             }
         } catch (RemoteException remoteExc) {
             remoteExc.printStackTrace();
