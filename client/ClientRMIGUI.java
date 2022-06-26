@@ -39,7 +39,7 @@ public class ClientRMIGUI extends JFrame implements ActionListener {
     protected JPanel clientPanel, userPanel;
 
     //Main method to start client GUI
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         //set the look and feel to 'Nimbus'
         try {
             for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
@@ -49,6 +49,7 @@ public class ClientRMIGUI extends JFrame implements ActionListener {
                 }
             }
         } catch (Exception e) {
+            e.printStackTrace();
         }
         new ClientRMIGUI();
     }
@@ -81,29 +82,26 @@ public class ClientRMIGUI extends JFrame implements ActionListener {
     }
 
     public void initLogin() {
-        Container loginContainer = getContentPane();
         JPanel loginOuterPanel = new JPanel(new BorderLayout());
         loginOuterPanel.add(getLoginPanel(), BorderLayout.CENTER);
-        loginContainer.setLayout(new BorderLayout());
-        loginContainer.add(loginOuterPanel, BorderLayout.CENTER);
         frameLogin.setVisible(true);
         frameLogin.pack();
         frameLogin.setAlwaysOnTop(false);
         frameLogin.setLocation(300, 300);
         frameLogin.setSize(300, 200);
-        frameLogin.add(loginContainer);
+        frameLogin.add(loginOuterPanel);
         usernameField.requestFocus();
-
         frameLogin.setDefaultCloseOperation(EXIT_ON_CLOSE);
-
         frameLogin.setVisible(true);
     }
 
+    public void disposeLogin() {
+        frameLogin.removeAll();
+        frameLogin.setVisible(false);
+        frameLogin.dispose();
+    }
+
     public void initChatroom() {
-        // close login window
-//        frameLogin.setVisible(false);
-//        frameLogin.dispose();
-//        frameLogin.remove(loginContainer);
         // Chatroom Window
         // remove window buttons and border frame to force user to exit on a button
         Container chatroomContainer = getContentPane();
@@ -120,14 +118,14 @@ public class ClientRMIGUI extends JFrame implements ActionListener {
         frameChatroom.pack();
         frameChatroom.setLocation(150, 150);
         frameChatroom.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        frameChatroom.setVisible(true);
+//        frameChatroom.setVisible(true);
 
     }
 
 
     ///Method to set up the JPanel to display the chat text
     public JPanel getTextPanel() {
-        String welcome = "Welcome enter your name and press Start to begin\n";
+        String welcome = "Welcome to SWE312 Chatroom!\n";
         chatArea = new JTextArea(welcome, 14, 34);
         chatArea.setMargin(new Insets(10, 10, 10, 10));
         chatArea.setFont(microsoftYaHeiUi);
@@ -218,12 +216,12 @@ public class ClientRMIGUI extends JFrame implements ActionListener {
         sendButton.addActionListener(this);
         sendButton.setEnabled(false);
 
-        loginButton = new JButton("Start ");
-        loginButton.addActionListener(this);
+//        loginButton = new JButton("Start ");
+//        loginButton.addActionListener(this);
 
-        JPanel buttonPanel = new JPanel(new GridLayout(2, 1));
+        JPanel buttonPanel = new JPanel(new GridLayout(1, 1));
         buttonPanel.add(new JLabel(""));
-        buttonPanel.add(loginButton);
+//        buttonPanel.add(loginButton);
         buttonPanel.add(sendButton);
 
         return buttonPanel;
@@ -255,7 +253,7 @@ public class ClientRMIGUI extends JFrame implements ActionListener {
 //                    chatArea.append("user: " + name + " connecting to chat...\n");
                     getConnected(username);
                     if (!chatClient.connectionProblem) {
-                        initChatroom(); // show chatroom
+                        frameChatroom.setVisible(true);
 //                        loginButton.setEnabled(false);
                         sendButton.setEnabled(true);
                     }
@@ -284,12 +282,14 @@ public class ClientRMIGUI extends JFrame implements ActionListener {
 
     //Make the connection to the chat server
     private void getConnected(String userName) throws RemoteException {
+        initChatroom(); // show chatroom
         //remove whitespace and non word characters to avoid malformed url
-        String cleanedUserName = userName.replaceAll("\\s+", "_");
+        String cleanedUserName;
         cleanedUserName = userName.replaceAll("\\W+", "_");
         try {
             chatClient = new ChatClient(this, cleanedUserName);
-            chatClient.startClient();
+            boolean success = chatClient.startClient();
+            if (success) disposeLogin();
         } catch (RemoteException e) {
             e.printStackTrace();
         }

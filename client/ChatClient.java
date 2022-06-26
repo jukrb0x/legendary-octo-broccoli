@@ -36,7 +36,7 @@ public class ChatClient extends UnicastRemoteObject implements ChatClientIF {
 
     //Register our own listening service/interface
     //lookup the server RMI interface, then send our details
-    public void startClient() throws RemoteException {
+    public boolean startClient() throws RemoteException {
         String[] details = {name, hostName, clientServiceName};
 
         try {
@@ -54,8 +54,11 @@ public class ChatClient extends UnicastRemoteObject implements ChatClientIF {
         }
         if (!connectionProblem) {
             registerWithServer(details);
+            System.out.println("Connected to server.\n");
+            return true;
+        } else {
+            return false;
         }
-        System.out.println("Client Listen RMI Server is running...\n");
     }
 
 
@@ -85,7 +88,6 @@ public class ChatClient extends UnicastRemoteObject implements ChatClientIF {
     //currently connected to the server
     @Override
     public void updateUserList(String[] currentUsers) throws RemoteException {
-
         chatGUI.userPanel.remove(chatGUI.clientPanel);
         chatGUI.setClientPanel(currentUsers);
         chatGUI.clientPanel.repaint();
