@@ -3,7 +3,6 @@ package client;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
 import java.rmi.RemoteException;
 
 import javax.swing.BorderFactory;
@@ -27,7 +26,7 @@ public class ClientRMIGUI extends JFrame implements ActionListener {
     private static final long serialVersionUID = 1L;
     private JPanel textPanel, loginPanel;
     private JTextField textField, usernameField;
-    private String name, message;
+    private String username, message;
     private Font microsoftYaHeiUi = new Font("Microsoft YaHei UI", Font.PLAIN, 14);
     private Border blankBorder = BorderFactory.createEmptyBorder(10, 10, 20, 10);
     private ChatClient chatClient;
@@ -62,7 +61,6 @@ public class ClientRMIGUI extends JFrame implements ActionListener {
         //intercept close method, inform server we are leaving
         //then let the system exit.
 
-
         frameChatroom.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
@@ -70,7 +68,7 @@ public class ClientRMIGUI extends JFrame implements ActionListener {
                 if (chatClient != null) {
                     try {
                         sendMessage("Bye all, I am leaving");
-                        chatClient.serverIF.leaveChat(name);
+                        chatClient.serverIF.leaveChat(username);
                     } catch (RemoteException e) {
                         e.printStackTrace();
                     }
@@ -79,44 +77,26 @@ public class ClientRMIGUI extends JFrame implements ActionListener {
             }
         });
 
+        initLogin();
+    }
+
+    public void initLogin() {
         Container loginContainer = getContentPane();
         JPanel loginOuterPanel = new JPanel(new BorderLayout());
         loginOuterPanel.add(getLoginPanel(), BorderLayout.CENTER);
         loginContainer.setLayout(new BorderLayout());
         loginContainer.add(loginOuterPanel, BorderLayout.CENTER);
-
-
         frameLogin.setVisible(true);
         frameLogin.pack();
         frameLogin.setAlwaysOnTop(false);
         frameLogin.setLocation(300, 300);
         frameLogin.setSize(300, 200);
         frameLogin.add(loginContainer);
-//        textField.requestFocus();
+        usernameField.requestFocus();
 
         frameLogin.setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         frameLogin.setVisible(true);
-
-//        // Chatroom Window
-//        // remove window buttons and border frame to force user to exit on a button
-//        Container chatroomContainer = getContentPane();
-//        JPanel chatroomOuterPanel = new JPanel(new BorderLayout());
-//
-////        chatroomOuterPanel.add(getInputPanel(), BorderLayout.CENTER);
-//        chatroomOuterPanel.add(getTextPanel(), BorderLayout.SOUTH);
-//
-//        chatroomContainer.setLayout(new BorderLayout());
-//        chatroomContainer.add(chatroomOuterPanel, BorderLayout.CENTER);
-//        chatroomContainer.add(getUsersPanel(), BorderLayout.EAST);
-//
-//        frameChatroom.add(chatroomContainer);
-//        frameChatroom.pack();
-//        frameChatroom.setLocation(150, 150);
-//        frameChatroom.setDefaultCloseOperation(EXIT_ON_CLOSE);
-//        frameChatroom.setVisible(true);
-//
-//
     }
 
     public void initChatroom() {
@@ -264,14 +244,16 @@ public class ClientRMIGUI extends JFrame implements ActionListener {
                     return;
                 }
             }
+
+            // login
             if (e.getSource() == loginButton) {
-                name = usernameField.getText();
-                if (name.length() != 0) {
+                username = usernameField.getText();
+                if (username.length() != 0) {
 //                    initChatroom();
 //                    frameChatroom.setTitle(name + "'s console ");
 //                    usernameField.setText("");
 //                    chatArea.append("user: " + name + " connecting to chat...\n");
-                    getConnected(name);
+                    getConnected(username);
                     if (!chatClient.connectionProblem) {
                         initChatroom(); // show chatroom
 //                        loginButton.setEnabled(false);
@@ -297,7 +279,7 @@ public class ClientRMIGUI extends JFrame implements ActionListener {
 
     //Send a message
     private void sendMessage(String chatMessage) throws RemoteException {
-        chatClient.serverIF.updateChat(name, chatMessage);
+        chatClient.serverIF.updateChat(username, chatMessage);
     }
 
     //Make the connection to the chat server
