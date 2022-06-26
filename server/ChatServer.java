@@ -35,6 +35,7 @@ public class ChatServer extends UnicastRemoteObject implements ChatServerIF {
         frame.add(new JScrollPane(jta), BorderLayout.CENTER);
         frame.setFont(font);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        jta.setEditable(false);
         frame.setVisible(true);
     }
 
