@@ -19,7 +19,6 @@ public class ChatServer extends UnicastRemoteObject implements ChatServerIF {
     private Vector<Chatter> chatters;
     private static final long serialVersionUID = 1L;
     protected static JTextArea jta = new JTextArea();
-    static Font font = new Font("Microsoft YaHei UI",Font.PLAIN,24);
 
     //Constructor
     public ChatServer() throws RemoteException {
@@ -33,14 +32,12 @@ public class ChatServer extends UnicastRemoteObject implements ChatServerIF {
         frame.setSize(700,500);
         frame.setLayout(new BorderLayout());
         frame.add(new JScrollPane(jta), BorderLayout.CENTER);
-        frame.setFont(font);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
     }
 
     //Local Method
     public static void main(String[] args) {
-
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 createGUI();
