@@ -33,7 +33,7 @@ public class ClientRMIGUI extends JFrame implements ActionListener {
     private String name, message;
     private Font meiryoFont = new Font("Meiryo", Font.PLAIN, 14);
     private Border blankBorder = BorderFactory.createEmptyBorder(10, 10, 20, 10);//top,r,b,l
-    private ChatClient3 chatClient;
+    private ChatClient chatClient;
     private JList<String> list;
     private DefaultListModel<String> listModel;
 
@@ -273,7 +273,7 @@ public class ClientRMIGUI extends JFrame implements ActionListener {
         String cleanedUserName = userName.replaceAll("\\s+", "_");
         cleanedUserName = userName.replaceAll("\\W+", "_");
         try {
-            chatClient = new ChatClient3(this, cleanedUserName);
+            chatClient = new ChatClient(this, cleanedUserName);
             chatClient.startClient();
         } catch (RemoteException e) {
             e.printStackTrace();

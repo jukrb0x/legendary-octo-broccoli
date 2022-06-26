@@ -10,7 +10,7 @@ import javax.swing.JOptionPane;
 
 import server.ChatServerIF;
 
-public class ChatClient3  extends UnicastRemoteObject implements ChatClient3IF {
+public class ChatClient extends UnicastRemoteObject implements ChatClientIF {
 
 	private static final long serialVersionUID = 7468891722773409712L;
 	ClientRMIGUI chatGUI;
@@ -25,7 +25,7 @@ public class ChatClient3  extends UnicastRemoteObject implements ChatClient3IF {
 	//class constructor,
 	//note may also use an overloaded constructor with
 	//a port no passed in argument to super
-	public ChatClient3(ClientRMIGUI aChatGUI, String userName) throws RemoteException {
+	public ChatClient(ClientRMIGUI aChatGUI, String userName) throws RemoteException {
 		super();
 		this.chatGUI = aChatGUI;
 		this.name = userName;

@@ -1,15 +1,15 @@
 package server;
 
-import client.ChatClient3IF;
+import client.ChatClientIF;
 
 
 public class Chatter {
 
 	public String name;
-	public ChatClient3IF client;
+	public ChatClientIF client;
 	
 	//constructor
-	public Chatter(String name, ChatClient3IF client){
+	public Chatter(String name, ChatClientIF client){
 		this.name = name;
 		this.client = client;
 	}
@@ -19,7 +19,7 @@ public class Chatter {
 	public String getName(){
 		return name;
 	}
-	public ChatClient3IF getClient(){
+	public ChatClientIF getClient(){
 		return client;
 	}
 }

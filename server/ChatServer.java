@@ -9,7 +9,7 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.Date;
 import java.util.Vector;
 
-import client.ChatClient3IF;
+import client.ChatClientIF;
 
 public class ChatServer extends UnicastRemoteObject implements ChatServerIF {
 	String line = "---------------------------------------------\n";
@@ -95,7 +95,7 @@ public class ChatServer extends UnicastRemoteObject implements ChatServerIF {
 	//send a test message for confirmation / test connection
 	private void registerChatter(String[] details){		
 		try{
-			ChatClient3IF nextClient = ( ChatClient3IF )Naming.lookup("rmi://" + details[1] + "/" + details[2]);
+			ChatClientIF nextClient = (ChatClientIF)Naming.lookup("rmi://" + details[1] + "/" + details[2]);
 			
 			chatters.addElement(new Chatter(details[0], nextClient));
 			
