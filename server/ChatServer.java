@@ -166,6 +166,8 @@ public class ChatServer extends UnicastRemoteObject implements ChatServerIF {
 	//A method to send a private message to selected clients
 	//The integer array holds the indexes (from the chatters vector)
 	//of the clients to send the message to
+
+
 	@Override
 	public void sendPM(int[] privateGroup, String privateMessage) throws RemoteException{
 		Chatter pc;
@@ -174,6 +176,7 @@ public class ChatServer extends UnicastRemoteObject implements ChatServerIF {
 			pc.getClient().messageFromServer(privateMessage);
 		}
 	}
+
 }
 
 

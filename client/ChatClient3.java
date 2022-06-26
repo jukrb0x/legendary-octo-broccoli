@@ -11,9 +11,7 @@ import javax.swing.JOptionPane;
 import server.ChatServerIF;
 
 public class ChatClient3  extends UnicastRemoteObject implements ChatClient3IF {
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 7468891722773409712L;
 	ClientRMIGUI chatGUI;
 	private String hostName = "localhost";
