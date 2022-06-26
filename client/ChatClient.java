@@ -44,7 +44,7 @@ public class ChatClient extends UnicastRemoteObject implements ChatClientIF {
             serverIF = (ChatServerIF) Naming.lookup("rmi://" + hostName + "/" + serviceName);
         } catch (ConnectException e) {
             JOptionPane.showMessageDialog(
-                    chatGUI.frame, "The server seems to be unavailable\nPlease try later",
+                    chatGUI.frameChatroom, "The server seems to be unavailable\nPlease try later",
                     "Connection problem", JOptionPane.ERROR_MESSAGE);
             connectionProblem = true;
             e.printStackTrace();
@@ -76,9 +76,9 @@ public class ChatClient extends UnicastRemoteObject implements ChatClientIF {
     @Override
     public void messageFromServer(String message) throws RemoteException {
         System.out.println(message);
-        chatGUI.textArea.append(message);
+        chatGUI.chatArea.append(message);
         //make the GUI display the last appended text
-        chatGUI.textArea.setCaretPosition(chatGUI.textArea.getDocument().getLength());
+        chatGUI.chatArea.setCaretPosition(chatGUI.chatArea.getDocument().getLength());
     }
 
     //A method to update the display of users

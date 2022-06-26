@@ -1,10 +1,6 @@
 package client;
 
-import java.awt.BorderLayout;
-import java.awt.Container;
-import java.awt.Font;
-import java.awt.GridLayout;
-import java.awt.Insets;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
@@ -29,18 +25,18 @@ import javax.swing.border.Border;
 public class ClientRMIGUI extends JFrame implements ActionListener {
 
     private static final long serialVersionUID = 1L;
-    private JPanel textPanel, inputPanel;
-    private JTextField textField;
+    private JPanel textPanel, loginPanel;
+    private JTextField textField, usernameField;
     private String name, message;
     private Font microsoftYaHeiUi = new Font("Microsoft YaHei UI", Font.PLAIN, 14);
-    private Border blankBorder = BorderFactory.createEmptyBorder(10, 10, 20, 10);//top,r,b,l
+    private Border blankBorder = BorderFactory.createEmptyBorder(10, 10, 20, 10);
     private ChatClient chatClient;
     private JList<String> list;
     private DefaultListModel<String> listModel;
 
-    protected JTextArea textArea;
-    protected JFrame frame;
-    protected JButton startButton, sendButton;
+    protected JTextArea chatArea;
+    protected JFrame frameChatroom, frameLogin;
+    protected JButton loginButton, sendButton, exitButton;
     protected JPanel clientPanel, userPanel;
 
     //Main method to start client GUI
@@ -61,12 +57,13 @@ public class ClientRMIGUI extends JFrame implements ActionListener {
     //GUI Constructor
     public ClientRMIGUI() {
 
-        frame = new JFrame("Client Chat Console");
+        frameLogin = new JFrame("Login");
+        frameChatroom = new JFrame("Client Chat Console");
         //intercept close method, inform server we are leaving
         //then let the system exit.
 
 
-        frame.addWindowListener(new java.awt.event.WindowAdapter() {
+        frameChatroom.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
 
@@ -82,40 +79,83 @@ public class ClientRMIGUI extends JFrame implements ActionListener {
             }
         });
 
-        //remove window buttons and border frame to force user to exit on a button
+        Container loginContainer = getContentPane();
+        JPanel loginOuterPanel = new JPanel(new BorderLayout());
+        loginOuterPanel.add(getLoginPanel(), BorderLayout.CENTER);
+        loginContainer.setLayout(new BorderLayout());
+        loginContainer.add(loginOuterPanel, BorderLayout.CENTER);
 
-        Container c = getContentPane();
-        JPanel outerPanel = new JPanel(new BorderLayout());
 
-        outerPanel.add(getInputPanel(), BorderLayout.CENTER);
-        outerPanel.add(getTextPanel(), BorderLayout.SOUTH);
+        frameLogin.setVisible(true);
+        frameLogin.pack();
+        frameLogin.setAlwaysOnTop(false);
+        frameLogin.setLocation(300, 300);
+        frameLogin.setSize(300, 200);
+        frameLogin.add(loginContainer);
+//        textField.requestFocus();
 
-        c.setLayout(new BorderLayout());
-        c.add(outerPanel, BorderLayout.CENTER);
-        c.add(getUsersPanel(), BorderLayout.EAST);
+        frameLogin.setDefaultCloseOperation(EXIT_ON_CLOSE);
 
-        frame.add(c);
-        frame.pack();
-        frame.setAlwaysOnTop(true);
-        frame.setLocation(150, 150);
-        textField.requestFocus();
+        frameLogin.setVisible(true);
 
-        frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        frame.setVisible(true);
+//        // Chatroom Window
+//        // remove window buttons and border frame to force user to exit on a button
+//        Container chatroomContainer = getContentPane();
+//        JPanel chatroomOuterPanel = new JPanel(new BorderLayout());
+//
+////        chatroomOuterPanel.add(getInputPanel(), BorderLayout.CENTER);
+//        chatroomOuterPanel.add(getTextPanel(), BorderLayout.SOUTH);
+//
+//        chatroomContainer.setLayout(new BorderLayout());
+//        chatroomContainer.add(chatroomOuterPanel, BorderLayout.CENTER);
+//        chatroomContainer.add(getUsersPanel(), BorderLayout.EAST);
+//
+//        frameChatroom.add(chatroomContainer);
+//        frameChatroom.pack();
+//        frameChatroom.setLocation(150, 150);
+//        frameChatroom.setDefaultCloseOperation(EXIT_ON_CLOSE);
+//        frameChatroom.setVisible(true);
+//
+//
+    }
+
+    public void initChatroom() {
+        // close login window
+//        frameLogin.setVisible(false);
+//        frameLogin.dispose();
+//        frameLogin.remove(loginContainer);
+        // Chatroom Window
+        // remove window buttons and border frame to force user to exit on a button
+        Container chatroomContainer = getContentPane();
+        JPanel chatroomOuterPanel = new JPanel(new BorderLayout());
+
+        chatroomOuterPanel.add(getInputPanel(), BorderLayout.CENTER);
+        chatroomOuterPanel.add(getTextPanel(), BorderLayout.SOUTH);
+
+        chatroomContainer.setLayout(new BorderLayout());
+        chatroomContainer.add(chatroomOuterPanel, BorderLayout.CENTER);
+        chatroomContainer.add(getUsersPanel(), BorderLayout.EAST);
+
+        frameChatroom.add(chatroomContainer);
+        frameChatroom.pack();
+        frameChatroom.setLocation(150, 150);
+        frameChatroom.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        frameChatroom.setVisible(true);
+
     }
 
 
     ///Method to set up the JPanel to display the chat text
     public JPanel getTextPanel() {
         String welcome = "Welcome enter your name and press Start to begin\n";
-        textArea = new JTextArea(welcome, 14, 34);
-        textArea.setMargin(new Insets(10, 10, 10, 10));
-        textArea.setFont(microsoftYaHeiUi);
+        chatArea = new JTextArea(welcome, 14, 34);
+        chatArea.setMargin(new Insets(10, 10, 10, 10));
+        chatArea.setFont(microsoftYaHeiUi);
 
-        textArea.setLineWrap(true);
-        textArea.setWrapStyleWord(true);
-        textArea.setEditable(false);
-        JScrollPane scrollPane = new JScrollPane(textArea);
+        chatArea.setLineWrap(true);
+        chatArea.setWrapStyleWord(true);
+        chatArea.setEditable(false);
+        JScrollPane scrollPane = new JScrollPane(chatArea);
         textPanel = new JPanel();
         textPanel.add(scrollPane);
 
@@ -125,12 +165,30 @@ public class ClientRMIGUI extends JFrame implements ActionListener {
 
     //Method to build the panel with input field
     public JPanel getInputPanel() {
-        inputPanel = new JPanel(new GridLayout(1, 1, 5, 5));
-        inputPanel.setBorder(blankBorder);
+        loginPanel = new JPanel(new GridLayout(1, 1, 5, 5));
+        loginPanel.setBorder(blankBorder);
         textField = new JTextField();
         textField.setFont(microsoftYaHeiUi);
-        inputPanel.add(textField);
-        return inputPanel;
+        loginPanel.add(textField);
+        return loginPanel;
+    }
+
+    public JPanel getLoginPanel() {
+        JLabel textLabel = new JLabel("Your username: ");
+        loginPanel = new JPanel(new GridLayout(2, 2, 1, 2));
+        loginPanel.setBorder(blankBorder);
+        usernameField = new JTextField();
+        usernameField.setFont(microsoftYaHeiUi);
+        loginPanel.add(textLabel);
+        loginPanel.add(usernameField);
+        exitButton = new JButton("Exit");
+        loginButton = new JButton("Login");
+        loginPanel.add(exitButton);
+        loginPanel.add(loginButton);
+        loginButton.addActionListener(this);
+        exitButton.addActionListener(this);
+        return loginPanel;
+
     }
 
     //Method to build the panel displaying currently connected users with a call to the button panel building method
@@ -141,7 +199,8 @@ public class ClientRMIGUI extends JFrame implements ActionListener {
 
         JLabel userLabel = new JLabel(userStr, JLabel.CENTER);
         userPanel.add(userLabel, BorderLayout.NORTH);
-        userLabel.setFont(new Font("Meiryo", Font.PLAIN, 16));
+//        userLabel.setFont(new Font("Meiryo", Font.PLAIN, 16));
+        userLabel.setFont(microsoftYaHeiUi);
 
         String[] noClientsYet = {"No other users"};
         setClientPanel(noClientsYet);
@@ -179,12 +238,12 @@ public class ClientRMIGUI extends JFrame implements ActionListener {
         sendButton.addActionListener(this);
         sendButton.setEnabled(false);
 
-        startButton = new JButton("Start ");
-        startButton.addActionListener(this);
+        loginButton = new JButton("Start ");
+        loginButton.addActionListener(this);
 
         JPanel buttonPanel = new JPanel(new GridLayout(2, 1));
         buttonPanel.add(new JLabel(""));
-        buttonPanel.add(startButton);
+        buttonPanel.add(loginButton);
         buttonPanel.add(sendButton);
 
         return buttonPanel;
@@ -196,19 +255,30 @@ public class ClientRMIGUI extends JFrame implements ActionListener {
 
         try {
             //get connected to chat service
-            if (e.getSource() == startButton) {
-                name = textField.getText();
+            if (e.getSource() == exitButton) {
+                // confirm to exit
+                int confirm = JOptionPane.showConfirmDialog(null, "Are you sure you want to exit?", "Exit", JOptionPane.YES_NO_OPTION);
+                if (confirm == JOptionPane.YES_OPTION) {
+                    System.exit(0);
+                } else {
+                    return;
+                }
+            }
+            if (e.getSource() == loginButton) {
+                name = usernameField.getText();
                 if (name.length() != 0) {
-                    frame.setTitle(name + "'s console ");
-                    textField.setText("");
-                    textArea.append("username : " + name + " connecting to chat...\n");
+//                    initChatroom();
+//                    frameChatroom.setTitle(name + "'s console ");
+//                    usernameField.setText("");
+//                    chatArea.append("user: " + name + " connecting to chat...\n");
                     getConnected(name);
                     if (!chatClient.connectionProblem) {
-                        startButton.setEnabled(false);
+                        initChatroom(); // show chatroom
+//                        loginButton.setEnabled(false);
                         sendButton.setEnabled(true);
                     }
                 } else {
-                    JOptionPane.showMessageDialog(frame, "Enter your name to Start");
+                    JOptionPane.showMessageDialog(frameChatroom, "Enter your name to Start");
                 }
             }
 
