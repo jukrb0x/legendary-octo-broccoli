@@ -56,29 +56,12 @@ public class ClientRMIGUI extends JFrame implements ActionListener {
 
     //GUI Constructor
     public ClientRMIGUI() {
-
+        // initialize the frames
         frameLogin = new JFrame("Login");
         frameChatroom = new JFrame("Client Chat Console");
-        //intercept close method, inform server we are leaving
-        //then let the system exit.
-
-        frameChatroom.addWindowListener(new java.awt.event.WindowAdapter() {
-            @Override
-            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-
-                if (chatClient != null) {
-                    try {
-                        sendMessage("Bye all, I am leaving");
-                        chatClient.serverIF.leaveChat(username);
-                    } catch (RemoteException e) {
-                        e.printStackTrace();
-                    }
-                }
-                System.exit(0);
-            }
-        });
-
         initLogin();
+        // window listener
+        attachListener();
     }
 
     public void initLogin() {
@@ -103,12 +86,11 @@ public class ClientRMIGUI extends JFrame implements ActionListener {
 
     public void initChatroom() {
         // Chatroom Window
-        // remove window buttons and border frame to force user to exit on a button
         Container chatroomContainer = getContentPane();
         JPanel chatroomOuterPanel = new JPanel(new BorderLayout());
 
-        chatroomOuterPanel.add(getInputPanel(), BorderLayout.CENTER);
-        chatroomOuterPanel.add(getTextPanel(), BorderLayout.SOUTH);
+        chatroomOuterPanel.add(getMsgPanel(), BorderLayout.CENTER);
+        chatroomOuterPanel.add(getChatPanel(), BorderLayout.SOUTH);
 
         chatroomContainer.setLayout(new BorderLayout());
         chatroomContainer.add(chatroomOuterPanel, BorderLayout.CENTER);
@@ -118,16 +100,32 @@ public class ClientRMIGUI extends JFrame implements ActionListener {
         frameChatroom.pack();
         frameChatroom.setLocation(150, 150);
         frameChatroom.setDefaultCloseOperation(EXIT_ON_CLOSE);
-//        frameChatroom.setVisible(true);
+    }
 
+    public void attachListener() {
+        frameChatroom.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+
+                if (chatClient != null) {
+                    try {
+                        sendMessage(username + " is leaving the chatroom.");
+                        chatClient.serverIF.leaveChat(username);
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
+                System.exit(0);
+            }
+        });
     }
 
 
     ///Method to set up the JPanel to display the chat text
-    public JPanel getTextPanel() {
+    public JPanel getMsgPanel() {
         String welcome = "Welcome to SWE312 Chatroom!\n";
-        chatArea = new JTextArea(welcome, 14, 34);
-        chatArea.setMargin(new Insets(10, 10, 10, 10));
+        chatArea = new JTextArea(welcome, 15, 30);
+//        chatArea.setMargin(new Insets(5, 1, 5, 1));
         chatArea.setFont(microsoftYaHeiUi);
 
         chatArea.setLineWrap(true);
@@ -143,12 +141,22 @@ public class ClientRMIGUI extends JFrame implements ActionListener {
 
     //Method to build the panel with input field
     public JPanel getInputPanel() {
-        loginPanel = new JPanel(new GridLayout(1, 1, 5, 5));
-        loginPanel.setBorder(blankBorder);
+        textPanel = new JPanel(new GridLayout(1, 1, 5, 1));
+        textPanel.setBorder(BorderFactory.createEmptyBorder(2, 0, 5, 1));
         textField = new JTextField();
         textField.setFont(microsoftYaHeiUi);
-        loginPanel.add(textField);
-        return loginPanel;
+        textPanel.add(textField);
+        return textPanel;
+    }
+
+    public JPanel getChatPanel(){
+//        JPanel msgPanel = new JPanel(new GridLayout(1, 1, 5, 1));
+        JPanel msgPanel = new JPanel(new BorderLayout());
+        msgPanel.setBorder(BorderFactory.createEmptyBorder(2, 5, 5, 0));
+        msgPanel.add(getInputPanel(), BorderLayout.CENTER);
+        msgPanel.add(getButtonPanel(), BorderLayout.EAST);
+        return msgPanel;
+
     }
 
     public JPanel getLoginPanel() {
@@ -173,18 +181,17 @@ public class ClientRMIGUI extends JFrame implements ActionListener {
     public JPanel getUsersPanel() {
 
         userPanel = new JPanel(new BorderLayout());
-        String userStr = " Current Users      ";
+        String userStr = "Online";
 
         JLabel userLabel = new JLabel(userStr, JLabel.CENTER);
         userPanel.add(userLabel, BorderLayout.NORTH);
-//        userLabel.setFont(new Font("Meiryo", Font.PLAIN, 16));
         userLabel.setFont(microsoftYaHeiUi);
 
-        String[] noClientsYet = {"No other users"};
-        setClientPanel(noClientsYet);
+        String[] emptyUserListStr = {"No other users"};
+        setClientPanel(emptyUserListStr);
 
         clientPanel.setFont(microsoftYaHeiUi);
-        userPanel.add(makeButtonPanel(), BorderLayout.NORTH);
+//        userPanel.add(getButtonPanel(), BorderLayout.SOUTH);
         userPanel.setBorder(blankBorder);
 
         return userPanel;
@@ -211,17 +218,11 @@ public class ClientRMIGUI extends JFrame implements ActionListener {
     }
 
     //Make the buttons and add the listener
-    public JPanel makeButtonPanel() {
-        sendButton = new JButton("Send ");
+    public JPanel getButtonPanel() {
+        sendButton = new JButton("Send");
         sendButton.addActionListener(this);
-        sendButton.setEnabled(false);
-
-//        loginButton = new JButton("Start ");
-//        loginButton.addActionListener(this);
-
         JPanel buttonPanel = new JPanel(new GridLayout(1, 1));
         buttonPanel.add(new JLabel(""));
-//        buttonPanel.add(loginButton);
         buttonPanel.add(sendButton);
 
         return buttonPanel;
