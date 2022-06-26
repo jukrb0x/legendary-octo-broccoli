@@ -42,7 +42,7 @@ public class ClientRMIGUI extends JFrame implements ActionListener {
     protected JButton privateMsgButton, startButton, sendButton;
     protected JPanel clientPanel, userPanel;
 
-    //Main method to start client GUI app.
+    //Main method to start client GUI
     public static void main(String args[]) {
         //set the look and feel to 'Nimbus'
         try {
@@ -79,9 +79,8 @@ public class ClientRMIGUI extends JFrame implements ActionListener {
                 System.exit(0);
             }
         });
-        //-----------------------------------------
-        //remove window buttons and border frame
-        //to force user to exit on a button
+
+        //remove window buttons and border frame to force user to exit on a button
 
         Container c = getContentPane();
         JPanel outerPanel = new JPanel(new BorderLayout());
@@ -132,8 +131,7 @@ public class ClientRMIGUI extends JFrame implements ActionListener {
         return inputPanel;
     }
 
-    //Method to build the panel displaying currently connected users
-    //with a call to the button panel building method
+    //Method to build the panel displaying currently connected users with a call to the button panel building method
     public JPanel getUsersPanel() {
 
         userPanel = new JPanel(new BorderLayout());
@@ -153,8 +151,7 @@ public class ClientRMIGUI extends JFrame implements ActionListener {
         return userPanel;
     }
 
-    //Populate current user panel with a
-    //selectable list of currently connected users
+    //Populate current user panel with a selectable list of currently connected users
     public void setClientPanel(String[] currClients) {
         clientPanel = new JPanel(new BorderLayout());
         listModel = new DefaultListModel<String>();
@@ -229,7 +226,7 @@ public class ClientRMIGUI extends JFrame implements ActionListener {
 
     }
 
-    //Send a message, to be relayed to all chatters
+    //Send a message
     private void sendMessage(String chatMessage) throws RemoteException {
         chatClient.serverIF.updateChat(name, chatMessage);
     }

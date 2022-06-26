@@ -14,8 +14,6 @@ public class Chatter {
 		this.client = client;
 	}
 
-	
-	//getters and setters
 	public String getName(){
 		return name;
 	}

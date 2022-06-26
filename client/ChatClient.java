@@ -55,17 +55,17 @@ public class ChatClient extends UnicastRemoteObject implements ChatClientIF {
 		}
 		if(!connectionProblem){
 			registerWithServer(details);
-		}	
+		}
 		System.out.println("Client Listen RMI Server is running...\n");
 	}
 
 
 	//pass our username, hostname and RMI service name to
 	//the server to register out interest in joining the chat
-	public void registerWithServer(String[] details) {		
+	public void registerWithServer(String[] details) {
 		try{
-			serverIF.passIDentity(this.ref);//now redundant ??
-			serverIF.registerListener(details);			
+			serverIF.passIDentity(this.ref);
+			serverIF.registerListener(details);
 		}
 		catch(Exception e){
 			e.printStackTrace();
@@ -79,7 +79,7 @@ public class ChatClient extends UnicastRemoteObject implements ChatClientIF {
 	public void messageFromServer(String message) throws RemoteException {
 		System.out.println( message );
 		chatGUI.textArea.append( message );
-		//make the gui display the last appended text, ie scroll to bottom
+		//make the GUI display the last appended text
 		chatGUI.textArea.setCaretPosition(chatGUI.textArea.getDocument().getLength());
 	}
 

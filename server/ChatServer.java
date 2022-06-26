@@ -64,7 +64,7 @@ public class ChatServer extends UnicastRemoteObject implements ChatServerIF {
 	//Receive a new client remote reference
 	@Override
 	public void passIDentity(RemoteRef ref) throws RemoteException {	
-		//System.out.println("\n" + ref.remoteToString() + "\n");
+
 		try{
 			System.out.println(line + ref.toString());
 		}catch(Exception e){
