@@ -7,6 +7,7 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
 import java.rmi.RemoteException;
 
 import javax.swing.BorderFactory;
@@ -31,15 +32,15 @@ public class ClientRMIGUI extends JFrame implements ActionListener {
     private JPanel textPanel, inputPanel;
     private JTextField textField;
     private String name, message;
-    private Font meiryoFont = new Font("Meiryo", Font.PLAIN, 14);
+    private Font microsoftYaHeiUi = new Font("Microsoft YaHei UI", Font.PLAIN, 14);
     private Border blankBorder = BorderFactory.createEmptyBorder(10, 10, 20, 10);//top,r,b,l
     private ChatClient chatClient;
     private JList<String> list;
     private DefaultListModel<String> listModel;
 
-    protected JTextArea textArea, userArea;
+    protected JTextArea textArea;
     protected JFrame frame;
-    protected JButton privateMsgButton, startButton, sendButton;
+    protected JButton startButton, sendButton;
     protected JPanel clientPanel, userPanel;
 
     //Main method to start client GUI
@@ -63,6 +64,7 @@ public class ClientRMIGUI extends JFrame implements ActionListener {
         frame = new JFrame("Client Chat Console");
         //intercept close method, inform server we are leaving
         //then let the system exit.
+
 
         frame.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
@@ -108,7 +110,7 @@ public class ClientRMIGUI extends JFrame implements ActionListener {
         String welcome = "Welcome enter your name and press Start to begin\n";
         textArea = new JTextArea(welcome, 14, 34);
         textArea.setMargin(new Insets(10, 10, 10, 10));
-        textArea.setFont(meiryoFont);
+        textArea.setFont(microsoftYaHeiUi);
 
         textArea.setLineWrap(true);
         textArea.setWrapStyleWord(true);
@@ -117,7 +119,7 @@ public class ClientRMIGUI extends JFrame implements ActionListener {
         textPanel = new JPanel();
         textPanel.add(scrollPane);
 
-        textPanel.setFont(new Font("Meiryo", Font.PLAIN, 14));
+        textPanel.setFont(microsoftYaHeiUi);
         return textPanel;
     }
 
@@ -126,7 +128,7 @@ public class ClientRMIGUI extends JFrame implements ActionListener {
         inputPanel = new JPanel(new GridLayout(1, 1, 5, 5));
         inputPanel.setBorder(blankBorder);
         textField = new JTextField();
-        textField.setFont(meiryoFont);
+        textField.setFont(microsoftYaHeiUi);
         inputPanel.add(textField);
         return inputPanel;
     }
@@ -144,7 +146,7 @@ public class ClientRMIGUI extends JFrame implements ActionListener {
         String[] noClientsYet = {"No other users"};
         setClientPanel(noClientsYet);
 
-        clientPanel.setFont(meiryoFont);
+        clientPanel.setFont(microsoftYaHeiUi);
         userPanel.add(makeButtonPanel(), BorderLayout.NORTH);
         userPanel.setBorder(blankBorder);
 
@@ -164,7 +166,7 @@ public class ClientRMIGUI extends JFrame implements ActionListener {
         list = new JList<String>(listModel);
         list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         list.setVisibleRowCount(8);
-        list.setFont(meiryoFont);
+        list.setFont(microsoftYaHeiUi);
         JScrollPane listScrollPane = new JScrollPane(list);
 
         clientPanel.add(listScrollPane, BorderLayout.CENTER);

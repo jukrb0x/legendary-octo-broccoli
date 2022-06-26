@@ -24,9 +24,11 @@ public class ChatServer extends UnicastRemoteObject implements ChatServerIF {
 
     //Local Method
     public static void main(String[] args) {
-        startRMIRegistry();
         String hostName = "localhost";
         String serviceName = "GroupChatService";
+        int portNumber = 8999;
+
+        startRMIRegistry(portNumber);
 
         if (args.length == 2) {
             hostName = args[0];
@@ -43,9 +45,9 @@ public class ChatServer extends UnicastRemoteObject implements ChatServerIF {
     }
 
     //Start the RMI Registry
-    public static void startRMIRegistry() {
+    public static void startRMIRegistry(int portNumber) {
         try {
-            java.rmi.registry.LocateRegistry.createRegistry(1099);
+            java.rmi.registry.LocateRegistry.createRegistry(portNumber);
             System.out.println("RMI Server ready");
         } catch (RemoteException e) {
             e.printStackTrace();
