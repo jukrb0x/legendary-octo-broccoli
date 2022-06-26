@@ -159,9 +159,6 @@ public class ClientRMIGUI extends JFrame implements ActionListener {
         for (String s : currClients) {
             listModel.addElement(s);
         }
-        if (currClients.length > 1) {
-            privateMsgButton.setEnabled(true);
-        }
 
         //Create the list and put it in a scroll pane.
         list = new JList<String>(listModel);
