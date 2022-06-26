@@ -1,5 +1,6 @@
 package server;
 
+import java.awt.*;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
@@ -11,10 +12,14 @@ import java.util.Vector;
 
 import client.ChatClientIF;
 
+import javax.swing.*;
+
 public class ChatServer extends UnicastRemoteObject implements ChatServerIF {
     String line = "---------------------------------------------\n";
     private Vector<Chatter> chatters;
     private static final long serialVersionUID = 1L;
+    protected static JTextArea jta = new JTextArea();
+    static Font font = new Font("Microsoft YaHei UI",Font.PLAIN,24);
 
     //Constructor
     public ChatServer() throws RemoteException {
@@ -22,11 +27,29 @@ public class ChatServer extends UnicastRemoteObject implements ChatServerIF {
         chatters = new Vector<Chatter>(10, 1);
     }
 
+    //create Server's GUI
+    private static void createGUI() {
+        JFrame frame = new JFrame("Chat Server GUI");
+        frame.setSize(700,500);
+        frame.setLayout(new BorderLayout());
+        frame.add(new JScrollPane(jta), BorderLayout.CENTER);
+        frame.setFont(font);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+    }
+
     //Local Method
     public static void main(String[] args) {
+
+        javax.swing.SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                createGUI();
+            }
+        });
+
         String hostName = "localhost";
         String serviceName = "GroupChatService";
-        int portNumber = 8999;
+        int portNumber = 1099;
 
         startRMIRegistry(portNumber);
 
@@ -38,8 +61,10 @@ public class ChatServer extends UnicastRemoteObject implements ChatServerIF {
         try {
             ChatServerIF hello = new ChatServer();
             Naming.rebind("rmi://" + hostName + "/" + serviceName, hello);
+            jta.append("Group Chat RMI Server is running... \n");
             System.out.println("Group Chat RMI Server is running...");
         } catch (Exception e) {
+            jta.append("Server had problems starting \n");
             System.out.println("Server had problems starting");
         }
     }
@@ -48,6 +73,7 @@ public class ChatServer extends UnicastRemoteObject implements ChatServerIF {
     public static void startRMIRegistry(int portNumber) {
         try {
             java.rmi.registry.LocateRegistry.createRegistry(portNumber);
+            jta.append("RMI Server ready \n");
             System.out.println("RMI Server ready");
         } catch (RemoteException e) {
             e.printStackTrace();
@@ -76,9 +102,17 @@ public class ChatServer extends UnicastRemoteObject implements ChatServerIF {
     //send on to register method
     @Override
     public void registerListener(String[] details) throws RemoteException {
+
+        jta.append(String.valueOf(new Date(System.currentTimeMillis()))+"\n");
         System.out.println(new Date(System.currentTimeMillis()));
+
+        jta.append(details[0] + " has joined the chat session"+"\n");
         System.out.println(details[0] + " has joined the chat session");
+
+        jta.append(details[0] + "'s hostname : " + details[1]+"\n");
         System.out.println(details[0] + "'s hostname : " + details[1]);
+
+        jta.append(details[0] + "'sRMI service : " + details[2]+"\n");
         System.out.println(details[0] + "'sRMI service : " + details[2]);
         registerChatter(details);
     }
@@ -142,7 +176,9 @@ public class ChatServer extends UnicastRemoteObject implements ChatServerIF {
 
         for (Chatter c : chatters) {
             if (c.getName().equals(userName)) {
+                jta.append(line + userName + " left the chat session"+"\n");
                 System.out.println(line + userName + " left the chat session");
+                jta.append(String.valueOf(new Date(System.currentTimeMillis()))+"\n");
                 System.out.println(new Date(System.currentTimeMillis()));
                 chatters.remove(c);
                 break;
