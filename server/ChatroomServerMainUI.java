@@ -121,8 +121,8 @@ public class ChatroomServerMainUI extends UnicastRemoteObject implements IChatro
     @Override
     public void handleUserRegister(String[] details) throws RemoteException {
         registerOnlineUser(details);
-        jta.append(new Date(System.currentTimeMillis()) + "\n");
-        System.out.println(new Date(System.currentTimeMillis()));
+        jta.append(divider + new Date(System.currentTimeMillis()) + "\n");
+        System.out.println(divider + new Date(System.currentTimeMillis()));
 
         String userName = details[0];
         String hostName = details[1];
@@ -150,7 +150,7 @@ public class ChatroomServerMainUI extends UnicastRemoteObject implements IChatro
             // todo
             // newcomer.handleServerMsg("\nChatroom Broadcast [" + new Date(System.currentTimeMillis()) + "]\nWelcome " + details[0] + "!\n");
 
-            broadcastMsg("\nChatroom Broadcast [" + new Date(System.currentTimeMillis()) + "]\nWelcome!\n" + details[0] + " has joined.\n");
+            broadcastMsg("\nChatroom Broadcast [" + new Date(System.currentTimeMillis()) + "]:\nWelcome!\n" + details[0] + " has joined.\n");
 
             updateOnlineUsers();
         } catch (RemoteException | MalformedURLException | NotBoundException e) {

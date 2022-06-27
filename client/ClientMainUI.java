@@ -25,18 +25,19 @@ public class ClientMainUI extends JFrame implements ActionListener {
 
     private static final long serialVersionUID = 1L;
     private JPanel textPanel, loginPanel;
-    private JTextField textField, usernameField;
+    private JTextField msgTextField, usernameField;
     private String username, message;
-    private Font microsoftYaHeiUi = new Font("Microsoft YaHei UI", Font.PLAIN, 14);
-    private Border defaultBorder = BorderFactory.createEmptyBorder(10, 10, 20, 10);
     private ChatroomClient chatroomClient;
     private JList<String> list;
-    private DefaultListModel<String> listModel;
+    private DefaultListModel<String> userListModel;
 
     protected JTextArea chatArea;
     protected JFrame frameChatroom, frameLogin;
     protected JButton loginButton, sendButton, exitButton;
-    protected JPanel clientPanel, userPanel;
+    protected JPanel onlineClientsPanel, onlineUserPanel;
+
+    private Border defaultBorder = BorderFactory.createEmptyBorder(10, 10, 20, 10);
+    private Font microsoftYaHeiUi = new Font("Microsoft YaHei UI", Font.PLAIN, 14);
 
     public static void main(String[] args) {
         // theme
@@ -53,7 +54,6 @@ public class ClientMainUI extends JFrame implements ActionListener {
         new ClientMainUI();
     }
 
-    //GUI Constructor
     public ClientMainUI() {
         // initialize the frames
         frameLogin = new JFrame("SWE312 Chatroom Login");
@@ -93,7 +93,7 @@ public class ClientMainUI extends JFrame implements ActionListener {
 
         chatroomContainer.setLayout(new BorderLayout());
         chatroomContainer.add(chatroomOuterPanel, BorderLayout.CENTER);
-        chatroomContainer.add(getUsersPanel(), BorderLayout.EAST);
+        chatroomContainer.add(getOnlineUsersPanel(), BorderLayout.EAST);
 
         frameChatroom.add(chatroomContainer);
         frameChatroom.pack();
@@ -120,11 +120,9 @@ public class ClientMainUI extends JFrame implements ActionListener {
     }
 
 
-    ///Method to set up the JPanel to display the chat text
     public JPanel getMsgPanel() {
         String welcome = "Welcome to SWE312 Chatroom!\n";
         chatArea = new JTextArea(welcome, 15, 30);
-//        chatArea.setMargin(new Insets(5, 1, 5, 1));
         chatArea.setFont(microsoftYaHeiUi);
 
         chatArea.setLineWrap(true);
@@ -138,18 +136,16 @@ public class ClientMainUI extends JFrame implements ActionListener {
         return textPanel;
     }
 
-    //Method to build the panel with input field
     public JPanel getInputPanel() {
         textPanel = new JPanel(new GridLayout(1, 1, 5, 1));
         textPanel.setBorder(BorderFactory.createEmptyBorder(2, 0, 5, 1));
-        textField = new JTextField();
-        textField.setFont(microsoftYaHeiUi);
-        textPanel.add(textField);
+        msgTextField = new JTextField();
+        msgTextField.setFont(microsoftYaHeiUi);
+        textPanel.add(msgTextField);
         return textPanel;
     }
 
     public JPanel getChatPanel(){
-//        JPanel msgPanel = new JPanel(new GridLayout(1, 1, 5, 1));
         JPanel msgPanel = new JPanel(new BorderLayout());
         msgPanel.setBorder(BorderFactory.createEmptyBorder(2, 5, 5, 0));
         msgPanel.add(getInputPanel(), BorderLayout.CENTER);
@@ -176,43 +172,40 @@ public class ClientMainUI extends JFrame implements ActionListener {
 
     }
 
-    //Method to build the panel displaying currently connected users with a call to the button panel building method
-    public JPanel getUsersPanel() {
+    public JPanel getOnlineUsersPanel() {
 
-        userPanel = new JPanel(new BorderLayout());
+        onlineUserPanel = new JPanel(new BorderLayout());
         String userStr = "Online";
 
         JLabel userLabel = new JLabel(userStr, JLabel.CENTER);
-        userPanel.add(userLabel, BorderLayout.NORTH);
+        onlineUserPanel.add(userLabel, BorderLayout.NORTH);
         userLabel.setFont(microsoftYaHeiUi);
 
         String[] emptyUserListStr = {"No other users"};
-        setClientPanel(emptyUserListStr);
+        setOnlineUsersPanel(emptyUserListStr);
 
-        clientPanel.setFont(microsoftYaHeiUi);
-//        userPanel.add(getButtonPanel(), BorderLayout.SOUTH);
-        userPanel.setBorder(defaultBorder);
+        onlineClientsPanel.setFont(microsoftYaHeiUi);
+        onlineUserPanel.setBorder(defaultBorder);
 
-        return userPanel;
+        return onlineUserPanel;
     }
 
-    //Populate current user panel with a selectable list of currently connected users
-    public void setClientPanel(String[] currClients) {
-        clientPanel = new JPanel(new BorderLayout());
-        listModel = new DefaultListModel<String>();
+    public void setOnlineUsersPanel(String[] currClients) {
+        onlineClientsPanel = new JPanel(new BorderLayout());
+        userListModel = new DefaultListModel<String>();
 
         for (String s : currClients) {
-            listModel.addElement(s);
+            userListModel.addElement(s);
         }
 
-        list = new JList<String>(listModel);
+        list = new JList<String>(userListModel);
         list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         list.setVisibleRowCount(8);
         list.setFont(microsoftYaHeiUi);
         JScrollPane listScrollPane = new JScrollPane(list);
 
-        clientPanel.add(listScrollPane, BorderLayout.CENTER);
-        userPanel.add(clientPanel, BorderLayout.CENTER);
+        onlineClientsPanel.add(listScrollPane, BorderLayout.CENTER);
+        onlineUserPanel.add(onlineClientsPanel, BorderLayout.CENTER);
     }
 
     public JPanel getButtonPanel() {
@@ -228,6 +221,7 @@ public class ClientMainUI extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         try {
+            // handle exit
             if (e.getSource() == exitButton) {
                 // confirm to exit
                 int confirm = JOptionPane.showConfirmDialog(null, "Are you sure you want to exit?", "Exit", JOptionPane.YES_NO_OPTION);
@@ -238,7 +232,7 @@ public class ClientMainUI extends JFrame implements ActionListener {
                 }
             }
 
-            // login
+            // handle login
             if (e.getSource() == loginButton) {
                 username = usernameField.getText();
                 if (username.length() != 0) {
@@ -252,10 +246,10 @@ public class ClientMainUI extends JFrame implements ActionListener {
                 }
             }
 
-            //get text and clear textField
+            // handle sending message
             if (e.getSource() == sendButton) {
-                message = textField.getText();
-                textField.setText("");
+                message = msgTextField.getText();
+                msgTextField.setText("");
                 sendMessage(message);
                 System.out.println("[Sending] " + message);
             }
@@ -265,15 +259,10 @@ public class ClientMainUI extends JFrame implements ActionListener {
 
     }
 
-    //Send a message
-    private void sendMessage(String chatMessage) throws RemoteException {
-        chatroomClient.server.handleChatroomMsg(username, chatMessage);
-    }
 
     // connect to chatroom server
     private void connectToServer(String userName) throws RemoteException {
         initChatroom(); // show chatroom
-        //remove whitespace and non word characters to avoid malformed url
         String cleanedUserName;
         cleanedUserName = userName.replaceAll("\\W+", "_");
         try {
@@ -284,6 +273,12 @@ public class ClientMainUI extends JFrame implements ActionListener {
             e.printStackTrace();
         }
     }
+
+    // send a message to chatroom
+    private void sendMessage(String chatMessage) throws RemoteException {
+        chatroomClient.server.handleChatroomMsg(username, chatMessage);
+    }
+
 }
 
 
