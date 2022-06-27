@@ -23,9 +23,6 @@ public class ChatroomClient extends UnicastRemoteObject implements IChatroomClie
     protected boolean connectionProblem = false;
 
 
-    //class constructor,
-    //note may also use an overloaded constructor with
-    //a port no passed in argument to super
     public ChatroomClient(ClientMainUI aChatGUI, String userName) throws RemoteException {
         super();
         this.chatGUI = aChatGUI;
