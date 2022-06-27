@@ -10,7 +10,7 @@ public interface IChatroomServer extends Remote {
 
     public void handleId(RemoteRef ref) throws RemoteException;
 
-    public void registerUserListener(String[] details) throws RemoteException;
+    public void handleUserRegister(String[] details) throws RemoteException;
 
     public void leaveChatroom(String userName) throws RemoteException;
 }

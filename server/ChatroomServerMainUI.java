@@ -94,11 +94,11 @@ public class ChatroomServerMainUI extends UnicastRemoteObject implements IChatro
         }
     }
 
-    //Receive a new client and display details to the console
-    //send on to register method
+    // register a new user
+    // send on to register method
     @Override
-    public void registerUserListener(String[] details) throws RemoteException {
-
+    public void handleUserRegister(String[] details) throws RemoteException {
+        registerOnlineUser(details);
         jta.append(new Date(System.currentTimeMillis()) + "\n");
         System.out.println(new Date(System.currentTimeMillis()));
 
@@ -116,22 +116,17 @@ public class ChatroomServerMainUI extends UnicastRemoteObject implements IChatro
         jta.append(divider);
         System.out.println(" - RMI service: " + RMI);
         System.out.println(divider);
-
-
-        registerChatter(details);
     }
 
-    //register the clients interface and store it in a reference for
-    //future messages to be sent to, ie other members messages of the chat session.
-    //send a test message for confirmation / test connection
-    private void registerChatter(String[] details) {
+    // register a client user and store the reference
+    private void registerOnlineUser(String[] details) {
         try {
             IChatroomClient newClient = (IChatroomClient) Naming.lookup("rmi://" + details[1] + "/" + details[2]);
 
             onlineUsers.addElement(new OnlineUser(details[0], newClient));
 
             // todo
-            // newClient.handleServerMsg("\nChatroom Broadcast [" + new Date(System.currentTimeMillis()) + "]\nWelcome " + details[0] + "!\n");
+            // newcomer.handleServerMsg("\nChatroom Broadcast [" + new Date(System.currentTimeMillis()) + "]\nWelcome " + details[0] + "!\n");
 
             sendToAll("\nChatroom Broadcast [" + new Date(System.currentTimeMillis()) + "]\nWelcome!\n" + details[0] + " has joined.\n");
 

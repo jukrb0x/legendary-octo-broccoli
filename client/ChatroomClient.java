@@ -62,7 +62,7 @@ public class ChatroomClient extends UnicastRemoteObject implements IChatroomClie
     public void registerWithServer(String[] details) {
         try {
             server.handleId(this.ref);
-            server.registerUserListener(details);
+            server.handleUserRegister(details);
         } catch (Exception e) {
             e.printStackTrace();
         }
