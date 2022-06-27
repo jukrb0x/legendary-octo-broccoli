@@ -65,6 +65,8 @@ public class ChatServer extends UnicastRemoteObject implements ChatServerIF {
         } catch (Exception e) {
             jta.append("Server had problems starting \n");
             System.out.println("Server had problems starting");
+            jta.append(String.valueOf(e.getStackTrace()));
+            e.printStackTrace();
         }
     }
 
