@@ -14,14 +14,14 @@ import client.IChatroomClient;
 
 import javax.swing.*;
 
-public class ChatroomServer extends UnicastRemoteObject implements IChatroomServer {
+public class ChatroomServerMainUI extends UnicastRemoteObject implements IChatroomServer {
     String divider = "---------------------------------------------\n";
     private Vector<OnlineUser> onlineUsers;
     private static final long serialVersionUID = 1L;
     protected static JTextArea jta = new JTextArea();
 
     //Constructor
-    public ChatroomServer() throws RemoteException {
+    public ChatroomServerMainUI() throws RemoteException {
         super();
         onlineUsers = new Vector<OnlineUser>(10, 1);
     }
@@ -57,7 +57,7 @@ public class ChatroomServer extends UnicastRemoteObject implements IChatroomServ
         }
 
         try {
-            IChatroomServer hello = new ChatroomServer();
+            IChatroomServer hello = new ChatroomServerMainUI();
             Naming.rebind("rmi://" + hostName + "/" + serviceName, hello);
             String msg = "Chatroom server is ready at " + new Date() + "\n";
             jta.append(msg);
