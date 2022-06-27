@@ -8,7 +8,6 @@ public class OnlineUser {
     public String name;
     public IChatroomClient client;
 
-    //constructor
     public OnlineUser(String name, IChatroomClient client) {
         this.name = name;
         this.client = client;
