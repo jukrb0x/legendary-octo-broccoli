@@ -19,7 +19,7 @@ public class ChatroomClient extends UnicastRemoteObject implements IChatroomClie
     private String serviceName = "SWE312Chatroom";
     private String clientServiceName;
     private String name;
-    protected IChatroomServer serverIF;
+    protected IChatroomServer server;
     protected boolean connectionProblem = false;
 
 
@@ -40,7 +40,7 @@ public class ChatroomClient extends UnicastRemoteObject implements IChatroomClie
 
         try {
             Naming.rebind("rmi://" + hostName + "/" + clientServiceName, this);
-            serverIF = (IChatroomServer) Naming.lookup("rmi://" + hostName + "/" + serviceName);
+            server = (IChatroomServer) Naming.lookup("rmi://" + hostName + "/" + serviceName);
         } catch (ConnectException e) {
             JOptionPane.showMessageDialog(
                     chatGUI.frameChatroom, "The server seems to be unavailable\nPlease try later",
@@ -64,8 +64,8 @@ public class ChatroomClient extends UnicastRemoteObject implements IChatroomClie
     // register user with {username, hostname, RMI service name}
     public void registerWithServer(String[] details) {
         try {
-            serverIF.passIdentity(this.ref);
-            serverIF.registerListener(details);
+            server.passIdentity(this.ref);
+            server.registerListener(details);
         } catch (Exception e) {
             e.printStackTrace();
         }

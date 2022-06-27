@@ -109,7 +109,7 @@ public class ClientMainUI extends JFrame implements ActionListener {
                 if (chatroomClient != null) {
                     try {
                         sendMessage(username + " is leaving the chatroom.");
-                        chatroomClient.serverIF.leaveChat(username);
+                        chatroomClient.server.leaveChat(username);
                     } catch (RemoteException e) {
                         e.printStackTrace();
                     }
@@ -277,7 +277,7 @@ public class ClientMainUI extends JFrame implements ActionListener {
 
     //Send a message
     private void sendMessage(String chatMessage) throws RemoteException {
-        chatroomClient.serverIF.updateChat(username, chatMessage);
+        chatroomClient.server.updateChat(username, chatMessage);
     }
 
     //Make the connection to the chat server
