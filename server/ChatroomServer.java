@@ -10,25 +10,25 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.Date;
 import java.util.Vector;
 
-import client.ChatClientIF;
+import client.IChatroomClient;
 
 import javax.swing.*;
 
-public class ChatServer extends UnicastRemoteObject implements ChatServerIF {
+public class ChatroomServer extends UnicastRemoteObject implements IChatroomServer {
     String divider = "---------------------------------------------\n";
-    private Vector<Chatter> chatters;
+    private Vector<OnlineUser> onlineUsers;
     private static final long serialVersionUID = 1L;
     protected static JTextArea jta = new JTextArea();
 
     //Constructor
-    public ChatServer() throws RemoteException {
+    public ChatroomServer() throws RemoteException {
         super();
-        chatters = new Vector<Chatter>(10, 1);
+        onlineUsers = new Vector<OnlineUser>(10, 1);
     }
 
     //create Server's GUI
     private static void createGUI() {
-        JFrame frame = new JFrame("Chat Server GUI");
+        JFrame frame = new JFrame("SWE312 Chatroom Server GUI");
         frame.setSize(700, 500);
         frame.setLayout(new BorderLayout());
         frame.add(new JScrollPane(jta), BorderLayout.CENTER);
@@ -46,7 +46,7 @@ public class ChatServer extends UnicastRemoteObject implements ChatServerIF {
         });
 
         String hostName = "localhost";
-        String serviceName = "GroupChatService";
+        String serviceName = "SWE312Chatroom";
         int portNumber = 1099;
 
         startRMIRegistry(portNumber);
@@ -57,20 +57,21 @@ public class ChatServer extends UnicastRemoteObject implements ChatServerIF {
         }
 
         try {
-            ChatServerIF hello = new ChatServer();
+            IChatroomServer hello = new ChatroomServer();
             Naming.rebind("rmi://" + hostName + "/" + serviceName, hello);
-            String msg = "Chat server is ready at " + new Date() + "\n";
+            String msg = "Chatroom server is ready at " + new Date() + "\n";
             jta.append(msg);
             System.out.println(msg);
         } catch (Exception e) {
-            jta.append("Server had problems starting \n");
-            System.out.println("Server had problems starting");
+            String msg = "! --- Chatroom Server Exception --- !";
+            jta.append(msg + "\n");
+            System.out.println(msg);
             jta.append(String.valueOf(e.getStackTrace()));
             e.printStackTrace();
         }
     }
 
-    //Start the RMI Registry
+    // RMI Registry
     public static void startRMIRegistry(int portNumber) {
         try {
             java.rmi.registry.LocateRegistry.createRegistry(portNumber);
@@ -81,17 +82,15 @@ public class ChatServer extends UnicastRemoteObject implements ChatServerIF {
         }
     }
 
-    //Remote Method
-    //Send a sentence to all connected clients
+    // broadcast msg to all clients
     public void updateChat(String name, String nextPost) throws RemoteException {
         String message = "\n" + name + " [" + new Date(System.currentTimeMillis()) + "]:\n" + nextPost + "\n";
         sendToAll(message);
     }
 
-    //Receive a new client remote reference
+    // receive a new client remote reference
     @Override
     public void passIdentity(RemoteRef ref) throws RemoteException {
-
         try {
             System.out.println(divider + ref.toString());
         } catch (Exception e) {
@@ -131,13 +130,14 @@ public class ChatServer extends UnicastRemoteObject implements ChatServerIF {
     //send a test message for confirmation / test connection
     private void registerChatter(String[] details) {
         try {
-            ChatClientIF nextClient = (ChatClientIF) Naming.lookup("rmi://" + details[1] + "/" + details[2]);
+            IChatroomClient newClient = (IChatroomClient) Naming.lookup("rmi://" + details[1] + "/" + details[2]);
 
-            chatters.addElement(new Chatter(details[0], nextClient));
+            onlineUsers.addElement(new OnlineUser(details[0], newClient));
 
-            nextClient.messageFromServer("\nChatroom Broadcast [" + new Date(System.currentTimeMillis()) + "]\nWelcome " + details[0] + "!\n");
+            // todo
+            // newClient.handleServerMsg("\nChatroom Broadcast [" + new Date(System.currentTimeMillis()) + "]\nWelcome " + details[0] + "!\n");
 
-            sendToAll("\nChatroom Broadcast [" + new Date(System.currentTimeMillis()) + "]\n" + details[0] + " has joined.\n");
+            sendToAll("\nChatroom Broadcast [" + new Date(System.currentTimeMillis()) + "]\nWelcome!\n" + details[0] + " has joined.\n");
 
             updateUserList();
         } catch (RemoteException | MalformedURLException | NotBoundException e) {
@@ -149,9 +149,9 @@ public class ChatServer extends UnicastRemoteObject implements ChatServerIF {
     //updateUserList RMI method
     private void updateUserList() {
         String[] currentUsers = getUserList();
-        for (Chatter c : chatters) {
+        for (OnlineUser c : onlineUsers) {
             try {
-                c.getClient().updateUserList(currentUsers);
+                c.getClient().updateOnlineUsers(currentUsers);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -161,9 +161,9 @@ public class ChatServer extends UnicastRemoteObject implements ChatServerIF {
     //generate a String array of current users
     private String[] getUserList() {
         // generate an array of current users
-        String[] allUsers = new String[chatters.size()];
+        String[] allUsers = new String[onlineUsers.size()];
         for (int i = 0; i < allUsers.length; i++) {
-            allUsers[i] = chatters.elementAt(i).getName();
+            allUsers[i] = onlineUsers.elementAt(i).getName();
         }
         return allUsers;
     }
@@ -171,9 +171,9 @@ public class ChatServer extends UnicastRemoteObject implements ChatServerIF {
     //Send a message to all users
     public void sendToAll(String newMessage) {
         jta.append(newMessage);
-        for (Chatter c : chatters) {
+        for (OnlineUser c : onlineUsers) {
             try {
-                c.getClient().messageFromServer(newMessage);
+                c.getClient().handleServerMsg(newMessage);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -184,17 +184,17 @@ public class ChatServer extends UnicastRemoteObject implements ChatServerIF {
     @Override
     public void leaveChat(String userName) throws RemoteException {
 
-        for (Chatter c : chatters) {
+        for (OnlineUser c : onlineUsers) {
             if (c.getName().equals(userName)) {
                 jta.append(divider + userName + " left." + "\n");
                 System.out.println(divider + userName + " left.");
                 jta.append(String.valueOf(new Date(System.currentTimeMillis())) + "\n");
                 System.out.println(new Date(System.currentTimeMillis()));
-                chatters.remove(c);
+                onlineUsers.remove(c);
                 break;
             }
         }
-        if (!chatters.isEmpty()) {
+        if (!onlineUsers.isEmpty()) {
             updateUserList();
         }
     }

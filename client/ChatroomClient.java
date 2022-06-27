@@ -9,24 +9,24 @@ import java.rmi.server.UnicastRemoteObject;
 
 import javax.swing.JOptionPane;
 
-import server.ChatServerIF;
+import server.IChatroomServer;
 
-public class ChatClient extends UnicastRemoteObject implements ChatClientIF {
+public class ChatroomClient extends UnicastRemoteObject implements IChatroomClient {
 
     private static final long serialVersionUID = 2233L;
-    ClientRMIGUI chatGUI;
+    ClientMainUI chatGUI;
     private String hostName = "localhost";
-    private String serviceName = "GroupChatService";
+    private String serviceName = "SWE312Chatroom";
     private String clientServiceName;
     private String name;
-    protected ChatServerIF serverIF;
+    protected IChatroomServer serverIF;
     protected boolean connectionProblem = false;
 
 
     //class constructor,
     //note may also use an overloaded constructor with
     //a port no passed in argument to super
-    public ChatClient(ClientRMIGUI aChatGUI, String userName) throws RemoteException {
+    public ChatroomClient(ClientMainUI aChatGUI, String userName) throws RemoteException {
         super();
         this.chatGUI = aChatGUI;
         this.name = userName;
@@ -34,14 +34,13 @@ public class ChatClient extends UnicastRemoteObject implements ChatClientIF {
     }
 
 
-    //Register our own listening service/interface
-    //lookup the server RMI interface, then send our details
-    public boolean startClient() throws RemoteException {
+    // register the client with the server
+    public boolean startConnection() throws RemoteException {
         String[] details = {name, hostName, clientServiceName};
 
         try {
             Naming.rebind("rmi://" + hostName + "/" + clientServiceName, this);
-            serverIF = (ChatServerIF) Naming.lookup("rmi://" + hostName + "/" + serviceName);
+            serverIF = (IChatroomServer) Naming.lookup("rmi://" + hostName + "/" + serviceName);
         } catch (ConnectException e) {
             JOptionPane.showMessageDialog(
                     chatGUI.frameChatroom, "The server seems to be unavailable\nPlease try later",
@@ -62,8 +61,7 @@ public class ChatClient extends UnicastRemoteObject implements ChatClientIF {
     }
 
 
-    //pass our username, hostname and RMI service name to
-    //the server to register out interest in joining the chat
+    // register user with {username, hostname, RMI service name}
     public void registerWithServer(String[] details) {
         try {
             serverIF.passIdentity(this.ref);
@@ -73,21 +71,18 @@ public class ChatClient extends UnicastRemoteObject implements ChatClientIF {
         }
     }
 
-    //Receive a string from the chat server
-    //this is the clients RMI method, which will be used by the server
-    //to send messages to us
+    // receive message from server, display it in the chat window
     @Override
-    public void messageFromServer(String message) throws RemoteException {
+    public void handleServerMsg(String message) throws RemoteException {
         System.out.println(message);
         chatGUI.chatArea.append(message);
         //make the GUI display the last appended text
         chatGUI.chatArea.setCaretPosition(chatGUI.chatArea.getDocument().getLength());
     }
 
-    //A method to update the display of users
-    //currently connected to the server
+    // update online user list
     @Override
-    public void updateUserList(String[] currentUsers) throws RemoteException {
+    public void updateOnlineUsers(String[] currentUsers) throws RemoteException {
         chatGUI.userPanel.remove(chatGUI.clientPanel);
         chatGUI.setClientPanel(currentUsers);
         chatGUI.clientPanel.repaint();
