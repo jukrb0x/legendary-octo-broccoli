@@ -27,7 +27,7 @@ public class ChatroomClient extends UnicastRemoteObject implements IChatroomClie
         super();
         this.chatGUI = aChatGUI;
         this.name = userName;
-        this.clientServiceName = "ClientListenService_" + userName;
+        this.clientServiceName = "Client_" + userName;
     }
 
 
