@@ -15,6 +15,7 @@ import client.IChatroomClient;
 import javax.swing.*;
 
 public class ChatroomServerMainUI extends UnicastRemoteObject implements IChatroomServer {
+    private int mutexBroadcast = 0;
     String divider = "---------------------------------------------\n";
     private Vector<OnlineUser> onlineUsers;
     private static final long serialVersionUID = 1L;
@@ -81,7 +82,28 @@ public class ChatroomServerMainUI extends UnicastRemoteObject implements IChatro
     // broadcast msg to all clients
     public void handleChatroomMsg(String name, String nextPost) throws RemoteException {
         String message = "\n" + name + " [" + new Date(System.currentTimeMillis()) + "]:\n" + nextPost + "\n";
-        broadcastMsg(message);
+        {
+            if (getMutexBroadcast() == 1) { // wait until mutex is free
+                while (true) {
+                    try {
+                        Thread.sleep(100);
+                        // awaiting
+                        if (getMutexBroadcast() == 0) {
+                            setMutexBroadcast(1); // sending lock
+                            broadcastMsg(message);
+                            setMutexBroadcast(0); // done sending
+                            break;
+                        }
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            } else { // mutex is free
+                setMutexBroadcast(1); // sending lock
+                broadcastMsg(message);
+                setMutexBroadcast(0); // done sending
+            }
+        }
     }
 
     // receive a new client remote reference
@@ -186,6 +208,14 @@ public class ChatroomServerMainUI extends UnicastRemoteObject implements IChatro
         if (!onlineUsers.isEmpty()) {
             updateOnlineUsers();
         }
+    }
+
+    public int getMutexBroadcast() {
+        return mutexBroadcast;
+    }
+
+    public void setMutexBroadcast(int mutexBroadcast) {
+        this.mutexBroadcast = mutexBroadcast;
     }
 }
 
