@@ -251,7 +251,7 @@ public class ClientMainUI extends JFrame implements ActionListener {
 //                    frameChatroom.setTitle(name + "'s console ");
 //                    usernameField.setText("");
 //                    chatArea.append("user: " + name + " connecting to chat...\n");
-                    getConnected(username);
+                    connectToServer(username);
                     if (!chatroomClient.connectionProblem) {
                         frameChatroom.setVisible(true);
 //                        loginButton.setEnabled(false);
@@ -280,8 +280,8 @@ public class ClientMainUI extends JFrame implements ActionListener {
         chatroomClient.server.updateChatroom(username, chatMessage);
     }
 
-    //Make the connection to the chat server
-    private void getConnected(String userName) throws RemoteException {
+    // connect to chatroom server
+    private void connectToServer(String userName) throws RemoteException {
         initChatroom(); // show chatroom
         //remove whitespace and non word characters to avoid malformed url
         String cleanedUserName;
