@@ -28,7 +28,7 @@ public class ClientMainUI extends JFrame implements ActionListener {
     private JTextField textField, usernameField;
     private String username, message;
     private Font microsoftYaHeiUi = new Font("Microsoft YaHei UI", Font.PLAIN, 14);
-    private Border blankBorder = BorderFactory.createEmptyBorder(10, 10, 20, 10);
+    private Border defaultBorder = BorderFactory.createEmptyBorder(10, 10, 20, 10);
     private ChatroomClient chatroomClient;
     private JList<String> list;
     private DefaultListModel<String> listModel;
@@ -161,7 +161,7 @@ public class ClientMainUI extends JFrame implements ActionListener {
     public JPanel getLoginPanel() {
         JLabel textLabel = new JLabel("Your username: ");
         loginPanel = new JPanel(new GridLayout(2, 2, 1, 2));
-        loginPanel.setBorder(blankBorder);
+        loginPanel.setBorder(defaultBorder);
         usernameField = new JTextField();
         usernameField.setFont(microsoftYaHeiUi);
         loginPanel.add(textLabel);
@@ -191,7 +191,7 @@ public class ClientMainUI extends JFrame implements ActionListener {
 
         clientPanel.setFont(microsoftYaHeiUi);
 //        userPanel.add(getButtonPanel(), BorderLayout.SOUTH);
-        userPanel.setBorder(blankBorder);
+        userPanel.setBorder(defaultBorder);
 
         return userPanel;
     }
@@ -205,7 +205,6 @@ public class ClientMainUI extends JFrame implements ActionListener {
             listModel.addElement(s);
         }
 
-        //Create the list and put it in a scroll pane.
         list = new JList<String>(listModel);
         list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         list.setVisibleRowCount(8);
@@ -216,7 +215,6 @@ public class ClientMainUI extends JFrame implements ActionListener {
         userPanel.add(clientPanel, BorderLayout.CENTER);
     }
 
-    //Make the buttons and add the listener
     public JPanel getButtonPanel() {
         sendButton = new JButton("Send");
         sendButton.addActionListener(this);
@@ -227,7 +225,6 @@ public class ClientMainUI extends JFrame implements ActionListener {
         return buttonPanel;
     }
 
-    //Action handling on the buttons
     @Override
     public void actionPerformed(ActionEvent e) {
         try {
