@@ -6,13 +6,13 @@ import java.rmi.server.RemoteRef;
 
 public interface IChatroomServer extends Remote {
 
-    public void updateChat(String userName, String chatMessage) throws RemoteException;
+    public void updateChatroom(String userName, String chatMessage) throws RemoteException;
 
-    public void passIdentity(RemoteRef ref) throws RemoteException;
+    public void handleId(RemoteRef ref) throws RemoteException;
 
-    public void registerListener(String[] details) throws RemoteException;
+    public void registerUserListener(String[] details) throws RemoteException;
 
-    public void leaveChat(String userName) throws RemoteException;
+    public void leaveChatroom(String userName) throws RemoteException;
 }
 
 

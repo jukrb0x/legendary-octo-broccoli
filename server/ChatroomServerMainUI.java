@@ -79,14 +79,14 @@ public class ChatroomServerMainUI extends UnicastRemoteObject implements IChatro
     }
 
     // broadcast msg to all clients
-    public void updateChat(String name, String nextPost) throws RemoteException {
+    public void updateChatroom(String name, String nextPost) throws RemoteException {
         String message = "\n" + name + " [" + new Date(System.currentTimeMillis()) + "]:\n" + nextPost + "\n";
         sendToAll(message);
     }
 
     // receive a new client remote reference
     @Override
-    public void passIdentity(RemoteRef ref) throws RemoteException {
+    public void handleId(RemoteRef ref) throws RemoteException {
         try {
             System.out.println(divider + ref.toString());
         } catch (Exception e) {
@@ -97,7 +97,7 @@ public class ChatroomServerMainUI extends UnicastRemoteObject implements IChatro
     //Receive a new client and display details to the console
     //send on to register method
     @Override
-    public void registerListener(String[] details) throws RemoteException {
+    public void registerUserListener(String[] details) throws RemoteException {
 
         jta.append(new Date(System.currentTimeMillis()) + "\n");
         System.out.println(new Date(System.currentTimeMillis()));
@@ -135,15 +135,13 @@ public class ChatroomServerMainUI extends UnicastRemoteObject implements IChatro
 
             sendToAll("\nChatroom Broadcast [" + new Date(System.currentTimeMillis()) + "]\nWelcome!\n" + details[0] + " has joined.\n");
 
-            updateUserList();
+            updateOnlineUsers();
         } catch (RemoteException | MalformedURLException | NotBoundException e) {
             e.printStackTrace();
         }
     }
 
-    //Update all clients by remotely invoking their
-    //updateUserList RMI method
-    private void updateUserList() {
+    private void updateOnlineUsers() {
         String[] currentUsers = getUserList();
         for (OnlineUser c : onlineUsers) {
             try {
@@ -178,20 +176,20 @@ public class ChatroomServerMainUI extends UnicastRemoteObject implements IChatro
 
     //remove a client from the list, notify everyone
     @Override
-    public void leaveChat(String userName) throws RemoteException {
+    public void leaveChatroom(String userName) throws RemoteException {
 
         for (OnlineUser c : onlineUsers) {
             if (c.getName().equals(userName)) {
                 jta.append(divider + userName + " left." + "\n");
                 System.out.println(divider + userName + " left.");
-                jta.append(String.valueOf(new Date(System.currentTimeMillis())) + "\n");
+                jta.append(new Date(System.currentTimeMillis()) + "\n");
                 System.out.println(new Date(System.currentTimeMillis()));
                 onlineUsers.remove(c);
                 break;
             }
         }
         if (!onlineUsers.isEmpty()) {
-            updateUserList();
+            updateOnlineUsers();
         }
     }
 }

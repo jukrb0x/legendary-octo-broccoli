@@ -61,8 +61,8 @@ public class ChatroomClient extends UnicastRemoteObject implements IChatroomClie
     // register user with {username, hostname, RMI service name}
     public void registerWithServer(String[] details) {
         try {
-            server.passIdentity(this.ref);
-            server.registerListener(details);
+            server.handleId(this.ref);
+            server.registerUserListener(details);
         } catch (Exception e) {
             e.printStackTrace();
         }
