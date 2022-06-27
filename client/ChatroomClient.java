@@ -14,7 +14,7 @@ import server.IChatroomServer;
 public class ChatroomClient extends UnicastRemoteObject implements IChatroomClient {
 
     private static final long serialVersionUID = 2233L;
-    ClientMainUI chatGUI;
+    ClientMainUI clientMainUI;
     private String hostName = "localhost";
     private String serviceName = "SWE312Chatroom";
     private String clientServiceName;
@@ -25,7 +25,7 @@ public class ChatroomClient extends UnicastRemoteObject implements IChatroomClie
 
     public ChatroomClient(ClientMainUI aChatGUI, String userName) throws RemoteException {
         super();
-        this.chatGUI = aChatGUI;
+        this.clientMainUI = aChatGUI;
         this.name = userName;
         this.clientServiceName = "Client_" + userName;
     }
@@ -36,11 +36,13 @@ public class ChatroomClient extends UnicastRemoteObject implements IChatroomClie
         String[] details = {name, hostName, clientServiceName};
 
         try {
-            Naming.rebind("rmi://" + hostName + "/" + clientServiceName, this);
-            server = (IChatroomServer) Naming.lookup("rmi://" + hostName + "/" + serviceName);
+            String bindingName = "rmi://" + hostName + "/" + clientServiceName;
+            String serverUrl = "rmi://" + hostName + "/" + serviceName;
+            Naming.rebind(bindingName, this);
+            server = (IChatroomServer) Naming.lookup(serverUrl);
         } catch (ConnectException e) {
             JOptionPane.showMessageDialog(
-                    chatGUI.frameChatroom, "The server seems to be unavailable\nPlease try later",
+                    clientMainUI.frameChatroom, "The server seems to be unavailable\nPlease try later",
                     "Connection problem", JOptionPane.ERROR_MESSAGE);
             connectionProblem = true;
             e.printStackTrace();
@@ -72,18 +74,18 @@ public class ChatroomClient extends UnicastRemoteObject implements IChatroomClie
     @Override
     public void handleServerMsg(String message) throws RemoteException {
         System.out.println(message);
-        chatGUI.chatArea.append(message);
+        clientMainUI.chatArea.append(message);
         //make the GUI display the last appended text
-        chatGUI.chatArea.setCaretPosition(chatGUI.chatArea.getDocument().getLength());
+        clientMainUI.chatArea.setCaretPosition(clientMainUI.chatArea.getDocument().getLength());
     }
 
     // update online user list
     @Override
     public void updateOnlineUsers(String[] currentUsers) throws RemoteException {
-        chatGUI.userPanel.remove(chatGUI.clientPanel);
-        chatGUI.setClientPanel(currentUsers);
-        chatGUI.clientPanel.repaint();
-        chatGUI.clientPanel.revalidate();
+        clientMainUI.onlineUserPanel.remove(clientMainUI.onlineClientsPanel);
+        clientMainUI.setOnlineUsersPanel(currentUsers);
+        clientMainUI.onlineClientsPanel.repaint();
+        clientMainUI.onlineClientsPanel.revalidate();
     }
 }
 
