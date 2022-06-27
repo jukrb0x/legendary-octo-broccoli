@@ -56,8 +56,8 @@ public class ClientMainUI extends JFrame implements ActionListener {
     //GUI Constructor
     public ClientMainUI() {
         // initialize the frames
-        frameLogin = new JFrame("Login");
-        frameChatroom = new JFrame("Chatroom");
+        frameLogin = new JFrame("SWE312 Chatroom Login");
+        frameChatroom = new JFrame("SWE312 Chatroom");
         initLogin();
         // window listener
         attachListener();

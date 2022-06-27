@@ -39,11 +39,7 @@ public class ChatroomServerMainUI extends UnicastRemoteObject implements IChatro
 
     //Local Method
     public static void main(String[] args) {
-        javax.swing.SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                createGUI();
-            }
-        });
+        javax.swing.SwingUtilities.invokeLater(() -> createGUI());
 
         String hostName = "localhost";
         String serviceName = "SWE312Chatroom";
@@ -103,7 +99,7 @@ public class ChatroomServerMainUI extends UnicastRemoteObject implements IChatro
     @Override
     public void registerListener(String[] details) throws RemoteException {
 
-        jta.append(String.valueOf(new Date(System.currentTimeMillis())) + "\n");
+        jta.append(new Date(System.currentTimeMillis()) + "\n");
         System.out.println(new Date(System.currentTimeMillis()));
 
         String userName = details[0];
