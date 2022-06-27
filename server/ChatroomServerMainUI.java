@@ -1,6 +1,7 @@
 package server;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
@@ -17,9 +18,11 @@ import javax.swing.*;
 public class ChatroomServerMainUI extends UnicastRemoteObject implements IChatroomServer {
     private int mutexBroadcast = 0;
     String divider = "---------------------------------------------\n";
-    private Vector<OnlineUser> onlineUsers;
+    Vector<OnlineUser> onlineUsers;
     private static final long serialVersionUID = 1L;
     protected static JTextArea jta = new JTextArea();
+    // todo test
+    protected static JButton btnSend = new JButton("TestSend");
 
     public ChatroomServerMainUI() throws RemoteException {
         super();
@@ -27,7 +30,7 @@ public class ChatroomServerMainUI extends UnicastRemoteObject implements IChatro
     }
 
     // create Server's GUI
-    private static void createGUI() {
+    private static void createGUI() throws RemoteException {
         JFrame frame = new JFrame("SWE312 Chatroom Server GUI");
         frame.setSize(700, 500);
         frame.setLayout(new BorderLayout());
@@ -35,10 +38,38 @@ public class ChatroomServerMainUI extends UnicastRemoteObject implements IChatro
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         jta.setEditable(false);
         frame.setVisible(true);
+        ChatroomServerTestGUI testGUI = new ChatroomServerTestGUI();
+        testGUI.createTestGUI();
+
+    }
+
+    void btnSendActionPerformed(ActionEvent evt) throws RemoteException {
+        if(evt.getSource() == btnSend) {
+            jta.append("TestSend\n");
+            manipulateAllUsers("TestSend");
+        }
+    }
+
+    @Override
+    public void manipulateAllUsers(String msg) throws RemoteException {
+        for (OnlineUser c : onlineUsers) {
+            System.out.println("Sending to " + c.getName());
+            try {
+                c.getClient().sendTestMsg(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public static void main(String[] args) {
-        javax.swing.SwingUtilities.invokeLater(() -> createGUI());
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            try {
+                createGUI();
+            } catch (RemoteException e) {
+                throw new RuntimeException(e);
+            }
+        });
 
         String hostName = "localhost";
         String serviceName = "SWE312Chatroom";
@@ -219,6 +250,7 @@ public class ChatroomServerMainUI extends UnicastRemoteObject implements IChatro
     public void lowerMutexBroadcast() {
         this.mutexBroadcast -= 1;
     }
+
 }
 
 

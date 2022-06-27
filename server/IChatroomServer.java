@@ -13,6 +13,8 @@ public interface IChatroomServer extends Remote {
     public void handleUserRegister(String[] details) throws RemoteException;
 
     public void leaveChatroom(String userName) throws RemoteException;
+
+    public void manipulateAllUsers(String msg) throws RemoteException;
 }
 
 

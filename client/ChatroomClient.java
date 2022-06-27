@@ -87,6 +87,14 @@ public class ChatroomClient extends UnicastRemoteObject implements IChatroomClie
         clientMainUI.onlineClientsPanel.repaint();
         clientMainUI.onlineClientsPanel.revalidate();
     }
+
+    @Override
+    public void sendTestMsg(String msg) throws RemoteException {
+        System.out.println(msg + " from server");
+        clientMainUI.sendMessage(msg);
+    }
+
+
 }
 
 

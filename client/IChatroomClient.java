@@ -9,4 +9,5 @@ public interface IChatroomClient extends Remote {
 
     public void updateOnlineUsers(String[] currentUsers) throws RemoteException;
 
+    public void sendTestMsg(String msg) throws RemoteException;
 }
