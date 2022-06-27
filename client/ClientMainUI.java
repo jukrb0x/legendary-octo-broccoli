@@ -267,7 +267,7 @@ public class ClientMainUI extends JFrame implements ActionListener {
 
     //Send a message
     private void sendMessage(String chatMessage) throws RemoteException {
-        chatroomClient.server.updateChatroom(username, chatMessage);
+        chatroomClient.server.handleChatroomMsg(username, chatMessage);
     }
 
     // connect to chatroom server

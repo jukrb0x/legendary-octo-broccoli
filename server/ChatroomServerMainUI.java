@@ -79,7 +79,7 @@ public class ChatroomServerMainUI extends UnicastRemoteObject implements IChatro
     }
 
     // broadcast msg to all clients
-    public void updateChatroom(String name, String nextPost) throws RemoteException {
+    public void handleChatroomMsg(String name, String nextPost) throws RemoteException {
         String message = "\n" + name + " [" + new Date(System.currentTimeMillis()) + "]:\n" + nextPost + "\n";
         sendToAll(message);
     }
