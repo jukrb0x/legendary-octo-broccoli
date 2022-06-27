@@ -81,7 +81,7 @@ public class ChatroomServerMainUI extends UnicastRemoteObject implements IChatro
     // broadcast msg to all clients
     public void handleChatroomMsg(String name, String nextPost) throws RemoteException {
         String message = "\n" + name + " [" + new Date(System.currentTimeMillis()) + "]:\n" + nextPost + "\n";
-        sendToAll(message);
+        broadcastMsg(message);
     }
 
     // receive a new client remote reference
@@ -128,7 +128,7 @@ public class ChatroomServerMainUI extends UnicastRemoteObject implements IChatro
             // todo
             // newcomer.handleServerMsg("\nChatroom Broadcast [" + new Date(System.currentTimeMillis()) + "]\nWelcome " + details[0] + "!\n");
 
-            sendToAll("\nChatroom Broadcast [" + new Date(System.currentTimeMillis()) + "]\nWelcome!\n" + details[0] + " has joined.\n");
+            broadcastMsg("\nChatroom Broadcast [" + new Date(System.currentTimeMillis()) + "]\nWelcome!\n" + details[0] + " has joined.\n");
 
             updateOnlineUsers();
         } catch (RemoteException | MalformedURLException | NotBoundException e) {
@@ -157,12 +157,12 @@ public class ChatroomServerMainUI extends UnicastRemoteObject implements IChatro
         return allUsers;
     }
 
-    //Send a message to all users
-    public void sendToAll(String newMessage) {
-        jta.append(newMessage);
+    // broadcast message
+    public void broadcastMsg(String msg) {
+        jta.append(msg);
         for (OnlineUser c : onlineUsers) {
             try {
-                c.getClient().handleServerMsg(newMessage);
+                c.getClient().handleServerMsg(msg);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
