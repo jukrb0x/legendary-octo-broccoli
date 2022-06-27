@@ -21,13 +21,12 @@ public class ChatroomServerMainUI extends UnicastRemoteObject implements IChatro
     private static final long serialVersionUID = 1L;
     protected static JTextArea jta = new JTextArea();
 
-    //Constructor
     public ChatroomServerMainUI() throws RemoteException {
         super();
         onlineUsers = new Vector<OnlineUser>(10, 1);
     }
 
-    //create Server's GUI
+    // create Server's GUI
     private static void createGUI() {
         JFrame frame = new JFrame("SWE312 Chatroom Server GUI");
         frame.setSize(700, 500);
@@ -38,7 +37,6 @@ public class ChatroomServerMainUI extends UnicastRemoteObject implements IChatro
         frame.setVisible(true);
     }
 
-    //Local Method
     public static void main(String[] args) {
         javax.swing.SwingUtilities.invokeLater(() -> createGUI());
 
@@ -54,8 +52,8 @@ public class ChatroomServerMainUI extends UnicastRemoteObject implements IChatro
         }
 
         try {
-            IChatroomServer hello = new ChatroomServerMainUI();
-            Naming.rebind("rmi://" + hostName + "/" + serviceName, hello);
+            IChatroomServer chatroomServer = new ChatroomServerMainUI();
+            Naming.rebind("rmi://" + hostName + "/" + serviceName, chatroomServer);
             String msg = "Chatroom server is ready at " + new Date() + "\n";
             jta.append(msg);
             System.out.println(msg);
@@ -80,8 +78,8 @@ public class ChatroomServerMainUI extends UnicastRemoteObject implements IChatro
     }
 
     // broadcast msg to all clients
-    public void handleChatroomMsg(String name, String nextPost) throws RemoteException {
-        String message = "\n" + name + " [" + new Date(System.currentTimeMillis()) + "]:\n" + nextPost + "\n";
+    public void handleChatroomMsg(String name, String msg) throws RemoteException {
+        String message = "\n" + name + " [" + new Date(System.currentTimeMillis()) + "]:\n" + msg + "\n";
         if (getMutexBroadcast() != 0) { // someone is already broadcasting
             // try to lock
             while (true) {
@@ -119,14 +117,14 @@ public class ChatroomServerMainUI extends UnicastRemoteObject implements IChatro
     // register a new user
     // send on to register method
     @Override
-    public void handleUserRegister(String[] details) throws RemoteException {
-        registerOnlineUser(details);
+    public void handleUserRegister(String[] registerInfo) throws RemoteException {
+        registerOnlineUser(registerInfo);
         jta.append(divider + new Date(System.currentTimeMillis()) + "\n");
         System.out.println(divider + new Date(System.currentTimeMillis()));
 
-        String userName = details[0];
-        String hostName = details[1];
-        String RMI = details[2];
+        String userName = registerInfo[0];
+        String hostName = registerInfo[1];
+        String RMI = registerInfo[2];
         String msg = divider + userName + " has joined the chat.\n";
         jta.append(msg);
         System.out.println(msg);
@@ -169,7 +167,6 @@ public class ChatroomServerMainUI extends UnicastRemoteObject implements IChatro
         }
     }
 
-    //generate a String array of current users
     private String[] getUserList() {
         // generate an array of current users
         String[] allUsers = new String[onlineUsers.size()];
@@ -191,7 +188,6 @@ public class ChatroomServerMainUI extends UnicastRemoteObject implements IChatro
         }
     }
 
-    //remove a client from the list, notify everyone
     @Override
     public void leaveChatroom(String userName) throws RemoteException {
 
@@ -209,6 +205,8 @@ public class ChatroomServerMainUI extends UnicastRemoteObject implements IChatro
             updateOnlineUsers();
         }
     }
+
+    // broadcast mutex methods
 
     public int getMutexBroadcast() {
         return mutexBroadcast;
