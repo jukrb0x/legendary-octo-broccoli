@@ -82,27 +82,27 @@ public class ChatroomServerMainUI extends UnicastRemoteObject implements IChatro
     // broadcast msg to all clients
     public void handleChatroomMsg(String name, String nextPost) throws RemoteException {
         String message = "\n" + name + " [" + new Date(System.currentTimeMillis()) + "]:\n" + nextPost + "\n";
-        {
-            if (getMutexBroadcast() == 1) { // wait until mutex is free
-                while (true) {
-                    try {
-                        Thread.sleep(100);
-                        // awaiting
-                        if (getMutexBroadcast() == 0) {
-                            setMutexBroadcast(1); // sending lock
-                            broadcastMsg(message);
-                            setMutexBroadcast(0); // done sending
-                            break;
-                        }
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+        if (getMutexBroadcast() != 0) { // someone is already broadcasting
+            // try to lock
+            while (true) {
+                try {
+                    // wait until mutex is free
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } finally {
+                    if (getMutexBroadcast() == 0) {
+                        raiseMutexBroadcast(); // lock
+                        broadcastMsg(message);
+                        lowerMutexBroadcast(); // unlock
+                        break;
                     }
                 }
-            } else { // mutex is free
-                setMutexBroadcast(1); // sending lock
-                broadcastMsg(message);
-                setMutexBroadcast(0); // done sending
             }
+        } else { // mutex is free
+            raiseMutexBroadcast(); // lock
+            broadcastMsg(message);
+            lowerMutexBroadcast(); // unlock
         }
     }
 
@@ -214,8 +214,12 @@ public class ChatroomServerMainUI extends UnicastRemoteObject implements IChatro
         return mutexBroadcast;
     }
 
-    public void setMutexBroadcast(int mutexBroadcast) {
-        this.mutexBroadcast = mutexBroadcast;
+    public void raiseMutexBroadcast() {
+        this.mutexBroadcast += 1;
+    }
+
+    public void lowerMutexBroadcast() {
+        this.mutexBroadcast -= 1;
     }
 }
 
