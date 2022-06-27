@@ -230,9 +230,7 @@ public class ClientMainUI extends JFrame implements ActionListener {
     //Action handling on the buttons
     @Override
     public void actionPerformed(ActionEvent e) {
-
         try {
-            //get connected to chat service
             if (e.getSource() == exitButton) {
                 // confirm to exit
                 int confirm = JOptionPane.showConfirmDialog(null, "Are you sure you want to exit?", "Exit", JOptionPane.YES_NO_OPTION);
@@ -247,14 +245,9 @@ public class ClientMainUI extends JFrame implements ActionListener {
             if (e.getSource() == loginButton) {
                 username = usernameField.getText();
                 if (username.length() != 0) {
-//                    initChatroom();
-//                    frameChatroom.setTitle(name + "'s console ");
-//                    usernameField.setText("");
-//                    chatArea.append("user: " + name + " connecting to chat...\n");
                     connectToServer(username);
                     if (!chatroomClient.connectionProblem) {
                         frameChatroom.setVisible(true);
-//                        loginButton.setEnabled(false);
                         sendButton.setEnabled(true);
                     }
                 } else {
